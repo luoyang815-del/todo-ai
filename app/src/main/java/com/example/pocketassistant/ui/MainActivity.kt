@@ -1,5 +1,6 @@
 
 package com.example.pocketassistant.ui
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,18 +15,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pocketassistant.data.Entry
 import com.example.pocketassistant.data.Event
+
 class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MaterialTheme {
-                val vm: MainViewModel = viewModel(factory = MainViewModel.factory(this))
+                // IMPORTANT: pass Application into factory to avoid type mismatch
+                val vm: MainViewModel = viewModel(factory = MainViewModel.factory(application))
                 MainScreen(vm)
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(vm: MainViewModel) {

@@ -1,5 +1,6 @@
 
 package com.example.pocketassistant.ui
+
 import android.widget.Toast
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,12 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 class SettingsActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { MaterialTheme { SettingsScreen() } }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
     val ctx = LocalContext.current

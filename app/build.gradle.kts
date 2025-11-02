@@ -19,13 +19,10 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    // === IMPORTANT: Align Java toolchain to 17 to avoid 1.8/17 mismatch ===
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-
-    // === Align Kotlin bytecode to Java 17 ===
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs += listOf("-Xjvm-default=all")
@@ -58,6 +55,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Lifecycle ViewModel for Compose (fix unresolved reference: viewModel)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
@@ -82,7 +82,6 @@ dependencies {
     implementation("androidx.glance:glance-appwidget:1.1.0")
 }
 
-// === Kotlin JVM toolchain pin to 17 (affects KAPT stubs too) ===
 kotlin {
     jvmToolchain(17)
 }
