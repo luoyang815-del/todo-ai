@@ -1,5 +1,5 @@
-package com.example.pocketassistant.ui
 
+package com.example.pocketassistant.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,9 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState   // ★ 关键：引入 collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pocketassistant.model.Message
 
@@ -29,15 +26,12 @@ class ChatActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(vm: ChatViewModel) {
-    // ★ 关键：把 StateFlow 转为 Compose State，并给出 initial
     val messages by vm.messages.collectAsState(initial = emptyList<Message>())
-
     var input by remember { mutableStateOf("") }
 
     Scaffold(topBar = { TopAppBar(title = { Text("智能对话 · 代办整理") }) }) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             LazyColumn(Modifier.weight(1f).padding(12.dp)) {
-                // ★ 关键：items 直接接收 List<Message>，不再歧义
                 items(messages) { m: Message ->
                     Card(Modifier.padding(vertical = 6.dp)) {
                         Column(Modifier.padding(12.dp)) {
@@ -49,19 +43,11 @@ fun ChatScreen(vm: ChatViewModel) {
                 }
             }
             Row(Modifier.padding(12.dp)) {
-                OutlinedTextField(
-                    value = input,
-                    onValueChange = { input = it },
-                    modifier = Modifier.weight(1f),
-                    label = { Text("对 GPT 说点什么…") }
-                )
+                OutlinedTextField(value = input, onValueChange = { input = it }, modifier = Modifier.weight(1f), label = { Text("对 GPT 说点什么…") })
                 Spacer(Modifier.width(8.dp))
                 Button(onClick = {
                     val t = input.trim()
-                    if (t.isNotEmpty()) {
-                        vm.send(t)
-                        input = ""
-                    }
+                    if (t.isNotEmpty()) { vm.send(t); input = "" }
                 }) { Text("发送") }
             }
         }
