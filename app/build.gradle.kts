@@ -19,6 +19,18 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    // === IMPORTANT: Align Java toolchain to 17 to avoid 1.8/17 mismatch ===
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // === Align Kotlin bytecode to Java 17 ===
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs += listOf("-Xjvm-default=all")
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -68,4 +80,9 @@ dependencies {
 
     // Glance AppWidget
     implementation("androidx.glance:glance-appwidget:1.1.0")
+}
+
+// === Kotlin JVM toolchain pin to 17 (affects KAPT stubs too) ===
+kotlin {
+    jvmToolchain(17)
 }
