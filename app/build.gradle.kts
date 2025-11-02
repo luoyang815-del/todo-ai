@@ -1,11 +1,11 @@
 // app/build.gradle.kts
 plugins {
-    id("com.android.application")
-    kotlin("android")
+    id("com.android.application") version "8.5.2"
+    kotlin("android") version "2.0.0"
 }
 
 android {
-    namespace = "com.example.todoai" // 关键：使用 namespace，Manifest 不再写 package
+    namespace = "com.example.todoai"
     compileSdk = 34
 
     defaultConfig {
@@ -15,6 +15,15 @@ android {
         versionCode = 1
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
+    }
+
+    // 保证 Java/Kotlin 目标一致，修复 Inconsistent JVM-target 错误
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlin {
+        jvmToolchain(17)
     }
 
     buildFeatures {

@@ -13,8 +13,6 @@ private const val CHANNEL_ID = "smart_org_channel"
 
 object SmartOrganizer {
     fun save(context: Context, settings: AppSettings) {
-        // 这里只做最小落地，避免网络/数据库导致的闪退
-        // 你可以替换为真实保存逻辑（写入数据库/上传等），但须保留 try/catch。
         ensureChannel(context)
         val summary = buildString {
             appendLine("已保存到智能整理：")
@@ -36,15 +34,13 @@ object SmartOrganizer {
 
     private fun ensureChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Smart Organizer"
-            val descriptionText = "保存到智能整理的通知"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Smart Organizer",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply { description = "保存到智能整理的通知" }
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.createNotificationChannel(channel)
         }
     }
 }

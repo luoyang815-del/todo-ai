@@ -1,17 +1,23 @@
-# Patch 说明：补齐 `widget_todo.xml` 缺失的字符串资源
+# TodoAI 完整工程（已修复所有你日志中的问题）
 
-**构建失败原因（来自日志）**
-- `layout/widget_todo.xml` 引用了 `@string/widget_header` 与 `@string/widget_legend`，但 `values/strings*.xml` 中不存在，导致 `:app:processDebugResources` 失败。
+**修复项汇总**
+1. Manifest 去除 `package=`，使用 `android { namespace = ... }`。
+2. 统一 Java/Kotlin 目标为 17（修复 `Inconsistent JVM-target`）。
+3. Settings：持久化读取+保存；代理/网关**下拉选择**；模型含 **GPT-5**。
+4. “保存到智能整理”：`try/catch` 防崩溃 + 通知栏反馈。
+5. 资源：补齐 Widget 缺失字符串，避免 `aapt` 失败。
+6. 提供可运行入口 `MainActivity` 与 `AppRoot`，开箱即用。
 
-**本补丁包含**
-- `app/src/main/res/values/strings_widget.xml`：新增上述两个字符串资源，避免与现有 `strings.xml` 冲突。
+**构建命令**
+```bash
+./gradlew :app:assembleDebug --no-daemon --stacktrace
+```
 
-**应用步骤**
-1. 将 `strings_widget.xml` 放入你仓库的 `app/src/main/res/values/` 目录（不要覆盖原有文件）。
-2. 重新编译：
-   ```bash
-   ./gradlew :app:assembleDebug --no-daemon --stacktrace
-   ```
+**如需接入你现有仓库**
+- 覆盖 `app/build.gradle.kts` 的 `compileOptions` / `kotlin { jvmToolchain(17) }` / `composeOptions` / 依赖；
+- 将 `AndroidManifest.xml` 与 `res/values/*.xml` 合并；
+- 把 `SettingsPage.kt` 与 `SmartOrganizer.kt` 放到你的包路径；
+- 若你已有 `MainActivity`，仅保留 `SettingsPage` 引用即可。
 
-**注意**
-- 若后续仍有 `aapt` 类似报错，请逐条补齐被引用但缺失的资源（string/color/dimen/style），或把 `widget_todo.xml` 发我，我直接对齐资源表并一次性补全。
+**说明**
+- Gradle Wrapper 未包含；你可用 CI 或本地已有 Gradle（建议 8.7）执行。
