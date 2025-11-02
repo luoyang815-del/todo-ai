@@ -1,37 +1,34 @@
-# 修复包说明（Settings 修复 + 闪退保护）
+# Patch 说明：修复 Manifest `package=` 导致的构建失败
 
-> 文件名使用英文，内容中文。将以下文件合并到你的项目中对应路径即可。
+**错误原因（AGP 8+）**  
+不再允许在 `AndroidManifest.xml` 中使用 `package="..."` 指定包名；必须在 `app/build.gradle(.kts)` 中通过 `namespace` 指定。
 
-## 主要修复点
-1. **设置持久化**：进入设置页会从 SharedPreferences 读取；点击保存会写回。
-2. **代理/网关类型下拉选择**：不再手填，避免大小写/非法值导致的崩溃。
-3. **模型列表加入 GPT‑5**：含 `gpt-5`、`gpt-5-turbo`、`gpt-4o`、`gpt-4o-mini` 等。
-4. **“保存到智能整理”闪退**：外围 `try/catch`，判空保护；加通知提示成功/失败。
-5. **权限补齐**：`INTERNET` 与 `POST_NOTIFICATIONS`，避免“Permission denied”。
+**本补丁包含：**
+1. `app/src/main/AndroidManifest.xml`（已移除 `package` 属性）
+2. `app/build.gradle.kts` 示例（包含 `namespace = "com.example.todoai"`）
 
-## 放置路径建议
-```
-app/
-└─ src/
-   └─ main/
-      ├─ AndroidManifest.xml              ← 可合并权限声明
-      ├─ res/values/strings.xml
-      └─ java/com/example/todoai/
-         ├─ settings/SettingsPage.kt
-         └─ smart/SmartOrganizer.kt
-```
+**应用步骤：**
+1. 用补丁中的 `AndroidManifest.xml` 覆盖你项目的 `app/src/main/AndroidManifest.xml`；
+2. 确保 `app/build.gradle.kts`（或 `build.gradle`）里存在：  
+   ```kotlin
+   android {
+       namespace = "com.example.todoai"
+   }
+   ```
+   若你使用 `build.gradle`（Groovy），写法为：
+   ```groovy
+   android {
+       namespace 'com.example.todoai'
+   }
+   ```
+3. **不要**在 Manifest 再写 `package`；如有其它库/清单片段也有 `package`，同样移除。  
+4. 重新执行：
+   ```bash
+   ./gradlew :app:assembleDebug --no-daemon --stacktrace
+   ```
 
-## 使用方式
-1. 将 `AndroidManifest.xml` 中的权限合并到你的清单（如已有则无需重复）。
-2. 把 `strings.xml` 合并到你项目的 `res/values/strings.xml`。
-3. 将 `SettingsPage.kt`、`SmartOrganizer.kt` 放到任意包路径（同步修改包名）。
-4. 在你的导航/入口中调用 `SettingsPage()`。
-5. 运行并验证：
-   - 修改设置后返回再进入，配置应保持；
-   - 代理/网关类型为下拉可选；
-   - 模型列表包含 `gpt-5`；
-   - 点击“保存到智能整理”，应收到系统通知且不闪退。
+**额外提示：**
+- `applicationId` 仍在 `defaultConfig` 内设置（面向打包的包名）；
+- 你的 Settings 与 SmartOrganizer 代码包名要与 `namespace` 保持一致或调整 `package` 声明。
 
-## 备注
-- 该实现使用 `SharedPreferences` 简化集成；如需迁移 `DataStore` 可在后续版本替换。
-- 通知渠道 ID：`smart_org_channel`，可在 `SmartOrganizer.kt` 中修改。
+祝编译通过！
