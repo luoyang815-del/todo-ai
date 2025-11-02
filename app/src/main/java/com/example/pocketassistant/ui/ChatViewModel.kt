@@ -1,6 +1,5 @@
 
 package com.example.pocketassistant.ui
-
 import android.app.Application
 import android.content.ContentValues
 import android.provider.CalendarContract
@@ -17,29 +16,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.TimeZone
-
 class ChatViewModel(private val app: Application): AndroidViewModel(app) {
     private val db = (app as App).db
     private val _messages = MutableStateFlow(listOf<Message>())
     val messages = _messages.asStateFlow()
-
     fun send(text: String) {
         viewModelScope.launch {
             _messages.value = _messages.value + Message("user", text)
             val entry = Entry(rawText = text, hasAiParsed = true, source = "chat")
             db.entryDao().insert(entry)
-
             val now = System.currentTimeMillis()
-            val event = Event(
-                entryId = entry.id,
-                title = text.take(30),
-                description = "（演示）来自聊天的智能整理结果，配置 GPT 后将调用模型自动抽取时间/地点/优先级",
-                startTime = now + 60*60*1000,
-                remindAt = now + 30*60*1000,
-                priority = 1
-            )
+            val event = Event(entryId = entry.id, title = text.take(30),
+                description = "（演示）已整理为待办；配置 GPT 后将自动抽取详细时间/地点/优先级",
+                startTime = now + 60*60*1000, remindAt = now + 30*60*1000, priority = 1)
             db.eventDao().insert(event)
-
             try {
                 val values = ContentValues().apply {
                     put(CalendarContract.Events.DTSTART, event.startTime)
@@ -51,21 +41,13 @@ class ChatViewModel(private val app: Application): AndroidViewModel(app) {
                 }
                 app.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
             } catch (_: Throwable) {}
-
             event.remindAt?.let {
                 ReminderScheduler.scheduleExact(app, it, event.title, event.description ?: "", event.eventId.hashCode())
             }
-
-            val prefs = app.getSharedPreferences("widget", Application.MODE_PRIVATE).edit()
-            prefs.putString("line1", "· " + event.title)
-            prefs.putInt("p1", event.priority)
-            prefs.apply()
             TodoWidgetProvider.requestUpdate(app)
-
-            _messages.value = _messages.value + Message("assistant", "已将你的消息整理为待办，写入系统日历，并更新桌面小组件。")
+            _messages.value = _messages.value + Message("assistant", "已将消息整理为待办并写入系统日历，桌面小组件已更新。")
         }
     }
-
     companion object {
         fun factory(application: Application? = null) = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {

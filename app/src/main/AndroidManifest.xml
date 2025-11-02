@@ -8,12 +8,14 @@
     <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:label="PocketAssistant"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        <activity android:name=".ui.EventDetailActivity" android:exported="false"/>
         <activity android:name=".ui.SettingsActivity" android:exported="false"/>
         <activity android:name=".ui.ChatActivity" android:exported="false"/>
         <activity android:name=".ui.MainActivity" android:exported="true">
@@ -38,5 +40,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info"/>
         </receiver>
+
+        <receiver android:name=".reminder.ReminderReceiver" android:exported="false"/>
     </application>
 </manifest>

@@ -7,43 +7,111 @@
     android:padding="12dp"
     android:background="#88000000">
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="随身助手 - 今日待办"
+        android:text="随身助手 · 今日待办"
         android:textColor="#FFFFFF"
         android:textStyle="bold" />
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="全部:0  重要:0  紧急:0"
+        android:textColor="#DDFFFFFF"
+        android:paddingTop="2dp"/>
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="日期"
         android:textColor="#DDFFFFFF"
-        android:paddingTop="4dp"/>
+        android:paddingTop="2dp"/>
+
     <TextView
         android:id="@+id/line1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="· 待办1"
+        android:text="· —"
         android:textColor="#FFFFFFFF"
-        android:paddingTop="6dp"/>
+        android:paddingTop="2dp"/>
+
     <TextView
         android:id="@+id/line2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="· 待办2"
-        android:textColor="#FFFFFFFF"/>
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
     <TextView
         android:id="@+id/line3"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="· 待办3"
-        android:textColor="#FFFFFFFF"/>
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
+
+    <TextView
+        android:id="@+id/line10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="· —"
+        android:textColor="#FFFFFFFF"
+        android:paddingTop="2dp"/>
     <TextView
         android:id="@+id/footer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="颜色=紧急程度（红/黄/绿）"
+        android:text="红/黄/绿=紧急/重要/普通"
         android:textColor="#AAFFFFFF"
         android:textSize="12sp"
         android:paddingTop="6dp"/>
