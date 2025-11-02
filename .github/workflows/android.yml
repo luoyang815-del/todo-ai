@@ -1,25 +1,40 @@
 
 name: Android CI
+
 on:
   push:
     branches: [ main, master ]
   pull_request:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
+
+      # Install JDK 17
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-      - name: Gradle cache
+
+      # Install a fixed Gradle version without relying on wrapper
+      - name: Set up Gradle 8.7
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7
+
+      # Prevent OOM in CI
+      - name: Configure Gradle memory
+        run: |
+          echo "ORG_GRADLE_OPTS=-Xmx3g -Dorg.gradle.daemon=false" >> $GITHUB_ENV
+
+      # Build debug APK using 'gradle' (not ./gradlew)
       - name: Build Debug APK
-        run: ./gradlew :app:assembleDebug
+        run: gradle :app:assembleDebug --stacktrace --no-daemon
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
