@@ -12,12 +12,9 @@ abstract class AppDatabase: RoomDatabase() {
         @Volatile private var INSTANCE: AppDatabase? = null
         fun get(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java, "pocket-assistant.db"
-                )
-                .fallbackToDestructiveMigration()
-                .build().also { INSTANCE = it }
+                INSTANCE ?: Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "pocket-assistant.db")
+                    .fallbackToDestructiveMigration()
+                    .build().also { INSTANCE = it }
             }
     }
 }
