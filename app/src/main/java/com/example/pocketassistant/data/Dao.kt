@@ -1,3 +1,4 @@
+
 package com.example.pocketassistant.data
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
@@ -21,15 +22,6 @@ interface EventDao {
           COALESCE(remindAt, startTime, createdAt) ASC
     """)
     fun upcoming(): Flow<List<Event>>
-
-    @Query("SELECT COUNT(*) FROM events WHERE status='open'")
-    fun totalCount(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM events WHERE status='open' AND priority>=1")
-    fun importantCount(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM events WHERE status='open' AND priority>=2")
-    fun urgentCount(): Flow<Int>
 
     @Query("UPDATE events SET status='done' WHERE eventId=:id")
     suspend fun markDone(id: String)
