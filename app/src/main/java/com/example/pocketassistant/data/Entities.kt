@@ -1,0 +1,33 @@
+
+package com.example.pocketassistant.data
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.UUID
+
+@Entity(tableName = "entries")
+data class Entry(
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val rawText: String,
+    val createdAt: Long = System.currentTimeMillis(),
+    val source: String = "quick_input",
+    val hasAiParsed: Boolean = false,
+    val encrypted: Boolean = false
+)
+
+@Entity(tableName = "events")
+data class Event(
+    @PrimaryKey val eventId: String = UUID.randomUUID().toString(),
+    val entryId: String,
+    val title: String,
+    val description: String? = null,
+    val startTime: Long? = null,
+    val endTime: Long? = null,
+    val allDay: Boolean = false,
+    val location: String? = null,
+    val priority: Int = 0,
+    val tags: String? = null,
+    val remindAt: Long? = null,
+    val repeatRule: String? = null,
+    val status: String = "open"
+)

@@ -1,0 +1,7 @@
+
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="priority_high">#FF5252</color>
+    <color name="priority_med">#FFC107</color>
+    <color name="priority_low">#8BC34A</color>
+</resources>
