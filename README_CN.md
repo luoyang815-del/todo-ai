@@ -6,5 +6,5 @@
 ## GitHub Actions（已修复 gradlew 权限）
 详见 `.github/workflows/android.yml`，包含：
 - `chmod +x ./gradlew`
-- JDK 17、Gradle 缓存
+- JDK 17、Gradle 缓存。。。
 - `./gradlew :app:assembleDebug` 产出 APK Artifact。
