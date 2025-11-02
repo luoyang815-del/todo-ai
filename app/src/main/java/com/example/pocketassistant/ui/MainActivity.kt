@@ -1,5 +1,9 @@
 
 package com.example.pocketassistant.ui
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,27 +15,60 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pocketassistant.R
 import com.example.pocketassistant.data.Entry
 import com.example.pocketassistant.data.Event
+import com.example.pocketassistant.widget.TodoWidgetProvider
 
 class MainActivity: ComponentActivity() {
+
+    private fun openSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
+    private fun pinWidget() {
+        val mgr = AppWidgetManager.getInstance(this)
+        val provider = ComponentName(this, TodoWidgetProvider::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr.isRequestPinAppWidgetSupported) {
+            mgr.requestPinAppWidget(provider, null, null)
+        } else {
+            // 低版本或不支持时提示用户手动添加
+            startActivity(Intent("android.intent.action.MAIN").apply {
+                addCategory("android.intent.category.HOME")
+            })
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
                 val vm: MainViewModel = viewModel(factory = MainViewModel.provideFactory(application))
-                MainScreen(vm)
+                MainScreen(vm, onOpenSettings = { openSettings() }, onPinWidget = { pinWidget() })
             }
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(vm: MainViewModel) {
+fun MainScreen(vm: MainViewModel, onOpenSettings: ()->Unit, onPinWidget: ()->Unit) {
     var text by remember { mutableStateOf("") }
     val entries by vm.entries.collectAsState(initial = emptyList())
     val events by vm.events.collectAsState(initial = emptyList())
-    Scaffold(topBar = { TopAppBar(title = { Text("随身助手") }) }) { padding ->
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("随身助手") },
+                actions = {
+                    TextButton(onClick = onPinWidget) { Text(text = "添加小组件") }
+                    Spacer(Modifier.width(4.dp))
+                    TextButton(onClick = onOpenSettings) { Text(text = "设置") }
+                }
+            )
+        }
+    ) { padding ->
         Column(Modifier.padding(padding).padding(16.dp).fillMaxSize()) {
             OutlinedTextField(value = text, onValueChange = { text = it },
                 label = { Text("一句话快速记录") }, modifier = Modifier.fillMaxWidth())

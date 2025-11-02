@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.pocketassistant"
         minSdk = 26
         targetSdk = 34
-        versionCode = 9
-        versionName = "1.4.4"
+        versionCode = 10
+        versionName = "1.5.0"
         vectorDrawables.useSupportLibrary = true
     }
 

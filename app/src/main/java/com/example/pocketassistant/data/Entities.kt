@@ -20,7 +20,7 @@ data class Event(
     val title: String,
     val description: String? = null,
     val startTime: Long? = null,
-    val priority: Int = 0,          // 0普通 1重要 2紧急
+    val priority: Int = 0,
     val remindAt: Long? = null,
     val status: String = "open",
     val createdAt: Long = System.currentTimeMillis()

@@ -3,4 +3,6 @@
     <string name="app_name">PocketAssistant</string>
     <string name="widget_header">随身助手 · 今日待办</string>
     <string name="widget_legend">红/黄/绿 = 紧急/重要/普通</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_pin_widget">添加桌面小组件</string>
 </resources>

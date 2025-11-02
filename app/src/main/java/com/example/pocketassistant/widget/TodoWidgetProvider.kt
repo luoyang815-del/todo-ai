@@ -33,7 +33,7 @@ class TodoWidgetProvider : AppWidgetProvider() {
             val db = AppDatabase.get(context)
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             CoroutineScope(Dispatchers.IO).launch {
-                val cursor = db.openHelper.readableDatabase.query("""
+                val c = db.openHelper.readableDatabase.query("""
                     SELECT title, priority FROM events
                     WHERE status='open'
                     ORDER BY CASE WHEN priority>=2 THEN 0 WHEN priority=1 THEN 1 ELSE 2 END,
@@ -41,11 +41,11 @@ class TodoWidgetProvider : AppWidgetProvider() {
                     LIMIT 10
                 """)
                 val lines = mutableListOf<Pair<String,Int>>()
-                while (cursor.moveToNext()) lines += cursor.getString(0) to cursor.getInt(1)
-                cursor.close()
+                while (c.moveToNext()) lines += c.getString(0) to c.getInt(1)
+                c.close()
                 fun scalar(sql: String): Int {
-                    val c = db.openHelper.readableDatabase.query(sql); c.moveToFirst()
-                    val v = c.getInt(0); c.close(); return v
+                    val cc = db.openHelper.readableDatabase.query(sql); cc.moveToFirst()
+                    val v = cc.getInt(0); cc.close(); return v
                 }
                 val total = scalar("SELECT COUNT(*) FROM events WHERE status='open'")
                 val important = scalar("SELECT COUNT(*) FROM events WHERE status='open' AND priority>=1")

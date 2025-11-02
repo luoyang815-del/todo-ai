@@ -22,7 +22,6 @@ class SettingsActivity: ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
-    // Capture context in composable scope; DO NOT call LocalContext inside onClick lambdas
     val ctx = LocalContext.current
 
     val useGateway by vm.useGatewayKey.collectAsState(initial = true)
@@ -53,29 +52,18 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
             Text("GPT / 网关", style = MaterialTheme.typography.titleMedium)
             Row {
                 Checkbox(checked = useGatewayLocal, onCheckedChange = { useGatewayLocal = it })
-                Spacer(Modifier.width(8.dp))
-                Text("使用网关中的 API Key")
+                Spacer(Modifier.width(8.dp)); Text("使用网关中的 API Key")
             }
-            OutlinedTextField(
-                value = apiKeyLocal, onValueChange = { apiKeyLocal = it },
-                enabled = !useGatewayLocal,
-                label = { Text("OpenAI API Key（未走网关时填写）") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = baseUrlLocal, onValueChange = { baseUrlLocal = it },
-                label = { Text("Base URL（可填网关）") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            OutlinedTextField(apiKeyLocal, { apiKeyLocal = it }, enabled = !useGatewayLocal,
+                label = { Text("OpenAI API Key（未走网关时填写）") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(baseUrlLocal, { baseUrlLocal = it },
+                label = { Text("Base URL（可填网关）") }, modifier = Modifier.fillMaxWidth())
 
             Spacer(Modifier.height(12.dp))
             Text("模型选择", style = MaterialTheme.typography.titleMedium)
             ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-                OutlinedTextField(
-                    value = modelLocal, onValueChange = {}, readOnly = true,
-                    label = { Text("选择模型") },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
-                )
+                OutlinedTextField(value = modelLocal, onValueChange = {}, readOnly = true,
+                    label = { Text("选择模型") }, modifier = Modifier.menuAnchor().fillMaxWidth())
                 ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     models.forEach { m -> DropdownMenuItem(text = { Text(m) }, onClick = { modelLocal = m; expanded = false }) }
                 }
@@ -99,17 +87,12 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
             Spacer(Modifier.height(12.dp))
             Row {
                 Button(onClick = {
-                    vm.save(
-                        useGatewayLocal, apiKeyLocal, baseUrlLocal, modelLocal,
-                        proxyTypeLocal, proxyHostLocal, proxyPortLocal.toIntOrNull() ?: 0, proxyUserLocal, proxyPassLocal
-                    )
+                    vm.save(useGatewayLocal, apiKeyLocal, baseUrlLocal, modelLocal,
+                        proxyTypeLocal, proxyHostLocal, proxyPortLocal.toIntOrNull() ?: 0, proxyUserLocal, proxyPassLocal)
                     Toast.makeText(ctx, "已保存", Toast.LENGTH_SHORT).show()
                 }) { Text("保存") }
                 Spacer(Modifier.width(12.dp))
-                Button(onClick = {
-                    // 占位：后续接入真实网络检测
-                    Toast.makeText(ctx, "测试连通：示例", Toast.LENGTH_SHORT).show()
-                }) { Text("测试连通性") }
+                Button(onClick = { Toast.makeText(ctx, "测试连通：示例", Toast.LENGTH_SHORT).show() }) { Text("测试连通性") }
             }
         }
     }
