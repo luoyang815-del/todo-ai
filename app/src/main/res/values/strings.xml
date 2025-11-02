@@ -3,4 +3,6 @@
     <string name="app_name">PocketAssistant</string>
     <string name="widget_header">随身助手 · 今日待办</string>
     <string name="widget_legend">红/黄/绿 = 紧急/重要/普通</string>
+    <string name="notify_channel_name">事件提醒</string>
+    <string name="notify_channel_desc">PocketAssistant 即将到期的事件提醒</string>
 </resources>

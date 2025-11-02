@@ -2,7 +2,7 @@
 package com.example.pocketassistant.data
 import android.content.Context
 import androidx.room.*
-@Database(entities=[Entry::class,Event::class],version=2,exportSchema=false)
+@Database(entities=[Entry::class,Event::class],version=3,exportSchema=false)
 abstract class AppDatabase: RoomDatabase(){
   abstract fun entryDao(): EntryDao
   abstract fun eventDao(): EventDao

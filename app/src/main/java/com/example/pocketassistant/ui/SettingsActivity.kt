@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pocketassistant.net.OpenAiService
@@ -66,7 +67,7 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()){
         }
         Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)){
-          OutlinedTextField(proxyPortLocal,{proxyPortLocal=it}, label={Text("Port")}, singleLine=true, keyboardOptions=androidx.compose.ui.text.input.KeyboardOptions(keyboardType=KeyboardType.Number))
+          OutlinedTextField(proxyPortLocal,{proxyPortLocal=it}, label={Text("Port")}, singleLine=true, keyboardOptions=KeyboardOptions(keyboardType = KeyboardType.Number))
           Spacer(Modifier.height(8.dp))
           OutlinedTextField(proxyUserLocal,{proxyUserLocal=it}, label={Text("用户名")}, singleLine=true)
           Spacer(Modifier.height(8.dp))
