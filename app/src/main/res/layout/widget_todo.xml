@@ -1,0 +1,21 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="12dp" android:background="#88000000">
+    <TextView android:id="@+id/header" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="随身助手 · 今日待办" android:textStyle="bold" android:textColor="#FFFFFF"/>
+    <TextView android:id="@+id/summary" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="全部:0  重要:0  紧急:0" android:textColor="#DDFFFFFF"/>
+    <TextView android:id="@+id/date" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="日期" android:textColor="#DDFFFFFF"/>
+    <TextView android:id="@+id/line1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line3" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line4" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line5" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line6" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line7" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line8" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line9" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+    <TextView android:id="@+id/line10" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFFFF"/>
+</LinearLayout>
