@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pocketassistant.data.Entry
 import com.example.pocketassistant.data.Event
 
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -25,22 +25,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(vm: MainViewModel) {
     var text by remember { mutableStateOf("") }
     val entries by vm.entries.collectAsState(initial = emptyList())
     val events by vm.events.collectAsState(initial = emptyList())
-
     Scaffold(topBar = { TopAppBar(title = { Text("随身助手") }) }) { padding ->
         Column(Modifier.padding(padding).padding(16.dp).fillMaxSize()) {
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                label = { Text("一句话快速记录") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            OutlinedTextField(value = text, onValueChange = { text = it },
+                label = { Text("一句话快速记录") }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
             Row {
                 Button(onClick = { vm.addQuick(text); text = "" }) { Text("保存") }

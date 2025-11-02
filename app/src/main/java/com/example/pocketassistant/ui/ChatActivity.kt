@@ -8,10 +8,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pocketassistant.model.Message
 
-class ChatActivity : ComponentActivity() {
+class ChatActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,13 +24,11 @@ class ChatActivity : ComponentActivity() {
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(vm: ChatViewModel) {
     val messages by vm.messages.collectAsState(initial = emptyList<Message>())
     var input by remember { mutableStateOf("") }
-
     Scaffold(topBar = { TopAppBar(title = { Text("智能对话 · 代办整理") }) }) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             LazyColumn(Modifier.weight(1f).padding(12.dp)) {
@@ -45,10 +45,7 @@ fun ChatScreen(vm: ChatViewModel) {
             Row(Modifier.padding(12.dp)) {
                 OutlinedTextField(value = input, onValueChange = { input = it }, modifier = Modifier.weight(1f), label = { Text("对 GPT 说点什么…") })
                 Spacer(Modifier.width(8.dp))
-                Button(onClick = {
-                    val t = input.trim()
-                    if (t.isNotEmpty()) { vm.send(t); input = "" }
-                }) { Text("发送") }
+                Button(onClick = { val t = input.trim(); if (t.isNotEmpty()) { vm.send(t); input = "" } }) { Text("发送") }
             }
         }
     }
