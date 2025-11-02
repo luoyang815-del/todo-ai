@@ -1,43 +1,42 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical" android:padding="12dp" android:background="#88000000">
-  <TextView android:id="@+id/header" android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:text="@string/widget_header" android:textStyle="bold" android:textColor="#FFFFFF"/>
-  <TextView android:id="@+id/summary" android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:text="全部:0  重要:0  紧急:0" android:textColor="#DDFFFFFF" android:paddingTop="2dp"/>
-  <TextView android:id="@+id/date" android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:text="日期" android:textColor="#DDFFFFFF" android:paddingTop="2dp"/>
-  
-    <TextView android:id="@+id/line1" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@android:color/transparent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <TextView android:id="@+id/line2" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
+    <TextView
+        android:id="@+id/tv_header"
+        android:text="@string/widget_header"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-    <TextView android:id="@+id/line3" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:gravity="space_between">
 
-    <TextView android:id="@+id/line4" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_total_label" />
 
-    <TextView android:id="@+id/line5" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
+        <TextView
+            android:id="@+id/tv_important"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_important_label" />
 
-    <TextView android:id="@+id/line6" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
-
-    <TextView android:id="@+id/line7" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
-
-    <TextView android:id="@+id/line8" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
-
-    <TextView android:id="@+id/line9" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
-
-    <TextView android:id="@+id/line10" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="" android:textColor="#FFFFFFFF" android:paddingTop="2dp"/>
-  <TextView android:id="@+id/footer" android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:text="@string/widget_legend" android:textColor="#AAFFFFFF" android:textSize="12sp" android:paddingTop="6dp"/>
+        <TextView
+            android:id="@+id/tv_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/widget_top_label" />
+    </LinearLayout>
 </LinearLayout>

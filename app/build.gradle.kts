@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.todoai"
+    namespace = "com.example.pocketassistant"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.todoai"
+        applicationId = "com.example.pocketassistant"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -28,8 +28,8 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
-    // Kotlin 2.0 起，不再需要设置 kotlinCompilerExtensionVersion，交由 compose 插件管理
 
     packaging {
         resources {

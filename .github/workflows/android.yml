@@ -1,10 +1,11 @@
-
 name: Android CI
+
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ main, master ]
   pull_request:
-  workflow_dispatch:
+    branches: [ main, master ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,20 +13,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: "17"
-      - uses: gradle/actions/setup-gradle@v3
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Gradle build
+        uses: gradle/gradle-build-action@v3
         with:
-          gradle-version: "8.7"
-      - name: Generate Gradle Wrapper
-        run: |
-          rm -f gradlew gradlew.bat || true
-          rm -rf gradle/wrapper || true
-          gradle wrapper --gradle-version 8.7
-          chmod +x ./gradlew
-      - name: Build Debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
+          arguments: :app:assembleDebug --no-daemon --stacktrace

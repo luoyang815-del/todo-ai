@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "TodoAI"
+rootProject.name = "PocketAssistant"
 include(":app")

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="widget_header">代办（今日）</string>
-    <string name="widget_legend">⚪ 未开始   ⏳ 进行中   ✅ 已完成</string>
-</resources>
