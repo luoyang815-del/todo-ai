@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pocketassistant"
+    namespace = "com.example.todoai"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pocketassistant"
+        applicationId = "com.example.todoai"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

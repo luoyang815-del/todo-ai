@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pocket Assistant</string>
+    <string name="app_name">Todo AI Assistant</string>
     <string name="save_settings">保存设置</string>
     <string name="save_to_smart">保存到智能整理</string>
 

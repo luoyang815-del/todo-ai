@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-package com.example.pocketassistant.smart
+package com.example.todoai.smart
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,7 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.pocketassistant.settings.AppSettings
+import com.example.todoai.settings.AppSettings
 
 private const val CHANNEL_ID = "smart_org_channel"
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-package com.example.pocketassistant.settings
+package com.example.todoai.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.pocketassistant.smart.SmartOrganizer
+import com.example.todoai.smart.SmartOrganizer
 
-private const val PREF_FILE = "pocket_prefs"
+private const val PREF_FILE = "todoai_prefs"
 
 private fun prefs(context: Context): SharedPreferences =
     context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE)

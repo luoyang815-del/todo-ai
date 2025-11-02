@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
-package com.example.pocketassistant.widget
+package com.example.todoai.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
-import com.example.pocketassistant.R
+import com.example.todoai.R
 
 class TodoWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetIds: IntArray, appWidgetManager: AppWidgetManager) {
-        val p = context.getSharedPreferences("pocket_prefs", Context.MODE_PRIVATE)
+        val p = context.getSharedPreferences("todoai_prefs", Context.MODE_PRIVATE)
         val total = p.getInt("todo_total", 0)
         val important = p.getInt("todo_important", 0)
         val topN = 10 // 展示前10

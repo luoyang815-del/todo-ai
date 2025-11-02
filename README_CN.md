@@ -1,18 +1,18 @@
-# CI 修复补丁（无 Gradle Wrapper 也能跑）
+# todo-ai（完整仓库）
 
-你的 CI 报错：
-> Cannot locate Gradle Wrapper script at '.../gradlew'. Specify 'gradle-version' for projects without Gradle wrapper configured.
+- **已修复**：CI 无 Gradle Wrapper 报错（通过先运行 `gradle/actions/setup-gradle` 并指定 `gradle-version: 8.7`，再运行 `gradle/gradle-build-action`）。
+- **Android**：AGP 8.5.2、Kotlin 2.0.0、Compose 插件、JDK 17 统一。
+- **功能**：设置持久化、代理/网关下拉、模型含 GPT-5；“保存到智能整理”通知；桌面小工具（总数/重要/前十）。
 
-**原因**：仓库没有 `gradlew`/`gradlew.bat` 和 `gradle/wrapper/*`。
+## 本地构建
+```bash
+# 无 wrapper，也可使用：
+./gradlew :app:assembleDebug  # 如果你后来加了 wrapper
+# 或在 IDE 直接构建
+```
 
-**解决**：在 GitHub Actions 里**显式指定 Gradle 版本**，无需 wrapper。
+## GitHub Actions
+已内置 `.github/workflows/android.yml`，**顺序非常关键**：
+1) `setup-java` → 2) `setup-gradle (gradle-version: 8.7)` → 3) `gradle-build-action`。
 
-## 使用方法
-把本补丁中的 `.github/workflows/android.yml` 覆盖你仓库的同名文件即可。
-
-该工作流会：
-1. 安装 JDK 17；
-2. 安装 Gradle 8.7（无 wrapper 模式）；
-3. 执行 `:app:assembleDebug` 构建。
-
-如需 release 构建，可把最后一步 `arguments` 改为 `:app:assembleRelease` 并配置签名。
+如果你更偏向使用 **Gradle Wrapper**，请告知，我将提供带 `gradlew` 的补丁（含 `chmod +x gradlew` 步骤）。
