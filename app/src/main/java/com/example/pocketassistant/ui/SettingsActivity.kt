@@ -1,6 +1,5 @@
 
 package com.example.pocketassistant.ui
-
 import android.widget.Toast
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,14 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 class SettingsActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { MaterialTheme { SettingsScreen() } }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
@@ -33,7 +30,6 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
     val proxyPort by vm.proxyPort.collectAsState(initial = 0)
     val proxyUser by vm.proxyUser.collectAsState(initial = "")
     val proxyPass by vm.proxyPass.collectAsState(initial = "")
-
     var useGatewayLocal by remember { mutableStateOf(useGateway) }
     var apiKeyLocal by remember { mutableStateOf(apiKey) }
     var baseUrlLocal by remember { mutableStateOf(baseUrl) }
@@ -45,7 +41,6 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
     var proxyPassLocal by remember { mutableStateOf(proxyPass) }
     var expanded by remember { mutableStateOf(false) }
     val models = listOf("gpt-4.1-mini","gpt-4o-mini","o3-mini","gpt-4.1")
-
     Column(Modifier.padding(16.dp)) {
         Text("GPT / Whisper 设置", style = MaterialTheme.typography.titleMedium)
         Row {
@@ -56,7 +51,6 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
             label = { Text("OpenAI API Key（未走网关时填写）") }, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(baseUrlLocal, { baseUrlLocal = it },
             label = { Text("Base URL（可填网关）") }, modifier = Modifier.fillMaxWidth())
-
         Spacer(Modifier.height(16.dp))
         Text("模型选择", style = MaterialTheme.typography.titleMedium)
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
@@ -66,7 +60,6 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
                 models.forEach { m -> DropdownMenuItem(text = { Text(m) }, onClick = { modelLocal = m; expanded = false }) }
             }
         }
-
         Spacer(Modifier.height(16.dp))
         Text("代理/网关", style = MaterialTheme.typography.titleMedium)
         Row {
@@ -81,7 +74,6 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
             Spacer(Modifier.width(8.dp))
             OutlinedTextField(proxyPassLocal, { proxyPassLocal = it }, label = { Text("密码") })
         }
-
         Spacer(Modifier.height(16.dp))
         Row {
             Button(onClick = {

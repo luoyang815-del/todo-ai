@@ -49,10 +49,10 @@ class ChatViewModel(private val app: Application): AndroidViewModel(app) {
         }
     }
     companion object {
-        fun factory(application: Application? = null) = object : ViewModelProvider.Factory {
+        fun provideFactory(app: Application) = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return ChatViewModel(application ?: throw IllegalStateException("Application required")) as T
+                return ChatViewModel(app) as T
             }
         }
     }

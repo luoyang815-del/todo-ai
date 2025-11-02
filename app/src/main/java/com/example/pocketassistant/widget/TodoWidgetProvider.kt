@@ -19,9 +19,9 @@ class TodoWidgetProvider : AppWidgetProvider() {
     }
     companion object {
         private fun colorForPriority(p: Int): Int = when {
-            p >= 2 -> 0xFFFF5252.toInt() // 红
-            p == 1 -> 0xFFFFC107.toInt() // 黄
-            else -> 0xFF8BC34A.toInt()   // 绿
+            p >= 2 -> 0xFFFF5252.toInt()
+            p == 1 -> 0xFFFFC107.toInt()
+            else -> 0xFF8BC34A.toInt()
         }
         fun requestUpdate(context: Context) {
             val mgr = AppWidgetManager.getInstance(context)
@@ -38,7 +38,7 @@ class TodoWidgetProvider : AppWidgetProvider() {
                     ORDER BY CASE WHEN priority>=2 THEN 0 WHEN priority=1 THEN 1 ELSE 2 END,
                              COALESCE(remindAt,startTime,createdAt) ASC
                     LIMIT 10
-                """.trimIndent())
+                """)
                 val lines = mutableListOf<Pair<String,Int>>()
                 while (cursor.moveToNext()) {
                     lines += cursor.getString(0) to cursor.getInt(1)

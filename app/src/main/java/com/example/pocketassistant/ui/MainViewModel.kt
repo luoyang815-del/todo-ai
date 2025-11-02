@@ -37,8 +37,11 @@ class MainViewModel(private val app: Application): AndroidViewModel(app) {
     fun goSettings() { app.startActivity(Intent(app, SettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
     fun goChat() { app.startActivity(Intent(app, ChatActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
     companion object {
-        val factory = { app: Application -> object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T { @Suppress("UNCHECKED_CAST") return MainViewModel(app) as T }
-        } }
+        fun provideFactory(app: Application) = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+        }
     }
 }

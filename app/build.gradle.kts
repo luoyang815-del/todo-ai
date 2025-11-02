@@ -14,8 +14,8 @@ android {
         applicationId = "com.example.pocketassistant"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.3.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -55,30 +55,23 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Lifecycle ViewModel for Compose (fix unresolved reference: viewModel)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
-    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
-    // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
-    // Retrofit & OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    // Moshi
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
-    // Glance AppWidget
     implementation("androidx.glance:glance-appwidget:1.1.0")
 }
 

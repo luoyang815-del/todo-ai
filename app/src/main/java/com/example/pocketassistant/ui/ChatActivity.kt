@@ -1,6 +1,5 @@
 
 package com.example.pocketassistant.ui
-
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import android.os.Bundle
@@ -12,22 +11,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 data class Message(val role: String, val content: String)
-
 class ChatActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                // IMPORTANT: Provide Application to factory
-                val vm: ChatViewModel = viewModel(factory = ChatViewModel.factory(application))
+                val vm: ChatViewModel = viewModel(factory = ChatViewModel.provideFactory(application))
                 ChatScreen(vm)
             }
         }
     }
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(vm: ChatViewModel) {
     val messages by vm.messages.collectAsState(initial = emptyList())

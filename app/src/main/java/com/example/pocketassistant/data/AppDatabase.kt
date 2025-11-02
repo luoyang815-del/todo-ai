@@ -16,7 +16,6 @@ abstract class AppDatabase: RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java, "pocket-assistant.db"
                 )
-                // Demo/CI 环境下直接破坏式迁移，避免旧版 schema 导致崩溃
                 .fallbackToDestructiveMigration()
                 .build().also { INSTANCE = it }
             }

@@ -27,6 +27,5 @@ data class Event(
     val remindAt: Long? = null,
     val repeatRule: String? = null,
     val status: String = "open",
-    // >>> 新增列：创建时间，供排序备用 <<<
     val createdAt: Long = System.currentTimeMillis()
 )

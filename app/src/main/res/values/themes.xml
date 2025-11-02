@@ -1,7 +1,6 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Remove problematic colorSurface reference to avoid AAPT 'attr/colorSurface not found' -->
     <style name="Theme.Material3.DayNight.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Compose 会自行管理沉浸式；如需自定义状态栏颜色，后续用 WindowInsetsController 在代码里处理 -->
+        <!-- Compose 管理系统栏；不在 XML 设置 statusBarColor 以避免 attr 缺失 -->
     </style>
 </resources>
