@@ -2,6 +2,7 @@
 plugins {
     id("com.android.application") version "8.5.2"
     kotlin("android") version "2.0.0"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -17,7 +18,6 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
-    // 保证 Java/Kotlin 目标一致，修复 Inconsistent JVM-target 错误
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -29,9 +29,7 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
+    // Kotlin 2.0 起，不再需要设置 kotlinCompilerExtensionVersion，交由 compose 插件管理
 
     packaging {
         resources {

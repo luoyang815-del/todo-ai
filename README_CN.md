@@ -1,23 +1,19 @@
-# TodoAI 完整工程（已修复所有你日志中的问题）
+# TodoAI 完整工程（v2）— 已修复 Kotlin 2.0 需要 Compose Compiler 插件的问题
 
-**修复项汇总**
-1. Manifest 去除 `package=`，使用 `android { namespace = ... }`。
-2. 统一 Java/Kotlin 目标为 17（修复 `Inconsistent JVM-target`）。
-3. Settings：持久化读取+保存；代理/网关**下拉选择**；模型含 **GPT-5**。
-4. “保存到智能整理”：`try/catch` 防崩溃 + 通知栏反馈。
-5. 资源：补齐 Widget 缺失字符串，避免 `aapt` 失败。
-6. 提供可运行入口 `MainActivity` 与 `AppRoot`，开箱即用。
+**修复点新增：**
+- 在 `app/build.gradle.kts` 增加插件：  
+  ```kotlin
+  plugins {
+      id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+  }
+  ```
+- 去掉旧的 `composeOptions.kotlinCompilerExtensionVersion`，由插件接管。
+- 其余：Manifest 合规、JDK17 统一、设置持久化、代理下拉、模型含 GPT‑5、智能整理通知、widget 字符串资源补齐。
 
-**构建命令**
+**构建：**
 ```bash
 ./gradlew :app:assembleDebug --no-daemon --stacktrace
 ```
 
-**如需接入你现有仓库**
-- 覆盖 `app/build.gradle.kts` 的 `compileOptions` / `kotlin { jvmToolchain(17) }` / `composeOptions` / 依赖；
-- 将 `AndroidManifest.xml` 与 `res/values/*.xml` 合并；
-- 把 `SettingsPage.kt` 与 `SmartOrganizer.kt` 放到你的包路径；
-- 若你已有 `MainActivity`，仅保留 `SettingsPage` 引用即可。
+如需我把包名/应用名/图标/签名、GitHub Actions 工作流一起打好，请把信息给我。
 
-**说明**
-- Gradle Wrapper 未包含；你可用 CI 或本地已有 Gradle（建议 8.7）执行。
