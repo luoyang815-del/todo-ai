@@ -1,4 +1,4 @@
-name: Android CI (Direct Gradle, No Wrapper)
+name: Android CI (Upload APK)
 
 on:
   push:
@@ -23,5 +23,22 @@ jobs:
         with:
           gradle-version: 8.7
 
-      - name: Build Debug APK (no wrapper)
+      - name: Build Debug APK
         run: gradle :app:assembleDebug --no-daemon --stacktrace
+
+      - name: List build outputs (debug)
+        run: |
+          echo "== List outputs =="
+          ls -lah app/build/outputs || true
+          ls -lah app/build/outputs/apk || true
+          find app/build -type f -name "*.apk" -print
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apks
+          path: |
+            app/build/outputs/apk/**/*.apk
+            app/build/intermediates/apk/**/*.apk
+            **/*.apk
+          if-no-files-found: warn
