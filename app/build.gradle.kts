@@ -23,6 +23,8 @@ android {
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2024.10.01")
     implementation(composeBom); androidTestImplementation(composeBom)
+
+    // Compose + lifecycle
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-compose:1.9.2")
     implementation("androidx.compose.ui:ui")
@@ -30,6 +32,10 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    // Material Components (provides Theme.Material3.* styles used by styles.xml)
+    implementation("com.google.android.material:material:1.12.0")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     testImplementation("junit:junit:4.13.2")
