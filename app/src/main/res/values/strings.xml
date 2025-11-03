@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <string name="app_name">Todo AI Assistant</string>
     <string name="save_settings">保存设置</string>
     <string name="save_to_smart">保存到智能整理</string>
+    <string name="widget_header">代办（今日）</string>
+    <string name="widget_total_label">总数</string>
+    <string name="widget_important_label">重要</string>
+    <string name="widget_top_label">前十</string>
 </resources>

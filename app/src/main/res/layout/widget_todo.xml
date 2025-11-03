@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="@android:color/transparent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -19,24 +18,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="4dp"
-        android:gravity="space_between">
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/tv_total"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/widget_total_label" />
 
         <TextView
             android:id="@+id/tv_important"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/widget_important_label" />
 
         <TextView
             android:id="@+id/tv_top"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/widget_top_label" />
     </LinearLayout>
 </LinearLayout>
