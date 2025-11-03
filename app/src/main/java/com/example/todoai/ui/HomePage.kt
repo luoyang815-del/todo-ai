@@ -21,6 +21,8 @@ import com.example.todoai.home.HomeViewModel
 import com.example.todoai.home.ChatItem
 import com.example.todoai.settings.AppSettings
 import com.example.todoai.widget.TodoWidgetProvider
+import com.example.todoai.data.TodoRepo
+import com.example.todoai.net.OpenAIClient
 
 @Composable
 fun HomePage(vm: HomeViewModel = viewModel()) {
@@ -43,6 +45,7 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
 
     val items by vm.items.collectAsState()
     var input by remember { mutableStateOf(TextFieldValue("")) }
+    var bulkRunning by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -54,18 +57,61 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
             value = input,
             onValueChange = { input = it },
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("向 GPT 发送内容（走设置里的代理/网关与模型）") },
+            label = { Text("输入代办或原始文本（两种模式见下）") },
             minLines = 3
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = { vm.send(ctx, settings, input.text.trim()) }) { Text("发送到 OpenAI 并通知") }
+            Button(onClick = {
+                val text = input.text.trim()
+                if (text.isNotBlank()) {
+                    TodoRepo.addLocal(ctx, text)
+                    TodoWidgetProvider.refresh(ctx)
+                    Toast.makeText(ctx, "已写入本地代办", Toast.LENGTH_SHORT).show()
+                }
+            }) { Text("直接入库（本地）") }
+
             Button(onClick = { requestPinWidget(ctx) }) { Text("添加到桌面小组件") }
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(onClick = { vm.send(ctx, settings, input.text.trim()) }) { Text("发送到 OpenAI 并通知") }
+
+            Button(enabled = !bulkRunning, onClick = {
+                bulkRunning = true
+                kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val un = TodoRepo.unprocessed(ctx)
+                        if (un.isEmpty()) {
+                            with(android.os.Handler(android.os.Looper.getMainLooper())) {
+                                post { Toast.makeText(ctx, "没有需要整理的条目", Toast.LENGTH_SHORT).show() }
+                            }
+                        } else {
+                            val client = OpenAIClient()
+                            val plain = un.joinToString("\n") { it.content }
+                            val prompt = "请把以下多条文本整理成待办清单，输出为每行一个简洁的待办（不要编号、不要解释）：\n" + plain
+                            val reply = client.chatOnce(settings, prompt)
+                            val todos = reply.split('\n').map { it.trim() }.filter { it.isNotBlank() }
+                            TodoRepo.addBatch(ctx, todos)
+                            TodoWidgetProvider.refresh(ctx)
+                            with(android.os.Handler(android.os.Looper.getMainLooper())) {
+                                post { Toast.makeText(ctx, "已整理并写入 " + todos.size + " 条代办", Toast.LENGTH_LONG).show() }
+                            }
+                        }
+                    } catch (e: Throwable) {
+                        with(android.os.Handler(android.os.Looper.getMainLooper())) {
+                            post { Toast.makeText(ctx, "整理失败：" + (e.message ?: "未知错误"), Toast.LENGTH_LONG).show() }
+                        }
+                    } finally {
+                        bulkRunning = false
+                    }
+                }
+            }) { Text(if (bulkRunning) "整理中…" else "整理未处理并入库") }
         }
 
         Divider()
 
-        Text("最近 10 条：", style = MaterialTheme.typography.titleMedium)
+        Text("最近 10 条（仅展示会话）：", style = MaterialTheme.typography.titleMedium)
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(items) { itx -> ChatCard(itx) }
         }
@@ -84,7 +130,7 @@ private fun ChatCard(item: ChatItem) {
 
 private fun requestPinWidget(ctx: Context) {
     val mgr = AppWidgetManager.getInstance(ctx)
-    val cn = ComponentName(ctx, TodoWidgetProvider::class.java)
+    val cn = ComponentName(ctx, com.example.todoai.widget.TodoWidgetProvider::class.java)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr.isRequestPinAppWidgetSupported) {
         mgr.requestPinAppWidget(cn, null, null)
         Toast.makeText(ctx, "已请求添加，请在弹出的系统对话框确认。", Toast.LENGTH_LONG).show()

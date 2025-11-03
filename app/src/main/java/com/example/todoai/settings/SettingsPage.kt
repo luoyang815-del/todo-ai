@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -56,13 +58,12 @@ fun SettingsPage() {
 
     Scaffold(topBar = { TopAppBar(title = { Text("设置") }) }) { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding).padding(16.dp),
+            Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedTextField(value = endpoint, onValueChange = { endpoint = it }, label = { Text("接口地址（Endpoint）") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = apiKey, onValueChange = { apiKey = it }, label = { Text("API Key") }, singleLine = true, modifier = Modifier.fillMaxWidth())
 
-            // 使用代理开关
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("使用代理/网关", modifier = Modifier.weight(1f))
                 Switch(checked = useProxy, onCheckedChange = { useProxy = it })
@@ -114,7 +115,7 @@ fun SettingsPage() {
                 }) { Text("保存到智能整理") }
             }
 
-            Text(text = "提示：代理/网关请通过下拉进行选择；模型已包含 GPT-5。", style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(12.dp))
         }
     }
 }
@@ -133,7 +134,6 @@ private fun ExposedDropdown(label: String, options: List<String>, selected: Stri
     }
 }
 
-// 统一 AppSettings 定义，供全局使用
 data class AppSettings(
     val endpoint: String,
     val apiKey: String,
