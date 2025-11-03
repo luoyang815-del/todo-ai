@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.todoai.data.TodoRepo
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoEditPage(id: Long, onDone: () -> Unit) {
     val ctx = LocalContext.current

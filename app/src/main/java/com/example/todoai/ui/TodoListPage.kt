@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,6 +23,7 @@ import com.example.todoai.widget.TodoWidgetProvider
 
 enum class SortMode { TIME_DESC, TIME_ASC, IMPORTANT_FIRST, UNPROCESSED_FIRST }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoListPage(onEdit: (Long) -> Unit) {
     val ctx = LocalContext.current
@@ -56,10 +57,11 @@ fun TodoListPage(onEdit: (Long) -> Unit) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
             AssistChip(onClick = { selectMode = !selectMode; selected.clear() }, label = { Text(if (selectMode) "退出批量" else "进入批量") })
             if (selectMode) {
+                val allShown = filteredSorted(list, filterText, sort).map { it.id }
                 AssistChip(onClick = {
-                    if (selected.size == filteredSorted(list, filterText, sort).size) selected.clear()
-                    else { selected.clear(); selected.addAll(filteredSorted(list, filterText, sort).map { it.id }) }
-                }, label = { Text(if (selected.size == filteredSorted(list, filterText, sort).size && selected.isNotEmpty()) "全不选" else "全选") })
+                    if (selected.size == allShown.size && selected.isNotEmpty()) selected.clear()
+                    else { selected.clear(); selected.addAll(allShown) }
+                }, label = { Text(if (selected.size == allShown.size && selected.isNotEmpty()) "全不选" else "全选") })
                 AssistChip(onClick = {
                     TodoRepo.bulkDelete(ctx, selected.toList())
                     selected.clear(); refresh(); TodoWidgetProvider.refresh(ctx)
@@ -150,7 +152,7 @@ private fun TodoCard(
                 }
                 Text(item.title.ifBlank { "（无标题）" }, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 IconButton(onClick = onToggleImportant) {
-                    Icon(imageVector = if (item.important) Icons.Filled.Star else Icons.Outlined.StarBorder, contentDescription = null)
+                    Icon(imageVector = if (item.important) Icons.Filled.Star else Icons.Outlined.StarOutline, contentDescription = null)
                 }
                 IconButton(onClick = onDelete) { Icon(imageVector = Icons.Filled.Delete, contentDescription = null) }
             }
