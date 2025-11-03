@@ -5,4 +5,7 @@
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/widget_todo"
     android:resizeMode="horizontal|vertical"
-    android:autoAdvanceViewId="@id/tv_header"/>
+    android:autoAdvanceViewId="@id/tv_header"
+    android:widgetCategory="home_screen"
+    android:previewImage="@android:drawable/ic_menu_today"
+    android:description="@string/widget_header"/>
