@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: MIT
 package com.example.todoai.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -151,9 +148,8 @@ private fun TodoCard(
                     AssistChip(onClick = onToggleSelect, label = { Text(label) })
                 }
                 Text(item.title.ifBlank { "（无标题）" }, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                IconButton(onClick = onToggleImportant) {
-                    Icon(imageVector = if (item.important) Icons.Filled.Star else Icons.Outlined.StarOutline, contentDescription = null)
-                }
+                // Use text star to avoid extended icons dependency
+                Text(if (item.important) "★" else "☆", style = MaterialTheme.typography.titleLarge, modifier = Modifier.clickable { onToggleImportant() })
                 IconButton(onClick = onDelete) { Icon(imageVector = Icons.Filled.Delete, contentDescription = null) }
             }
             Text(item.content, maxLines = 5, overflow = TextOverflow.Ellipsis, modifier = Modifier.clickable { onEdit() })
