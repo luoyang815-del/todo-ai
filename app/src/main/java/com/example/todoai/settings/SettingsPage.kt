@@ -14,15 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.todoai.smart.SmartOrganizer
 import com.example.todoai.net.NetDiag
 import kotlinx.coroutines.launch
 
 private const val PREF_FILE = "todoai_prefs"
 private fun prefs(context: Context): SharedPreferences = context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE)
-private fun loadString(p: SharedPreferences, key: String, def: String = ""): String = p.getString(key, def) ?: def
-private fun loadInt(p: SharedPreferences, key: String, def: Int = 0): Int = try { p.getInt(key, def) } catch (_: Exception) {
-    p.getString(key, null)?.toIntOrNull() ?: def }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,106 +26,60 @@ fun SettingsPage() {
     val context = LocalContext.current
     val p = remember { prefs(context) }
     val scope = rememberCoroutineScope()
+    var testing by remember { mutableStateOf(false) }
 
-    val proxyTypes = listOf("HTTP", "HTTPS", "SOCKS5", "Gateway")
-    val models = listOf("gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "gpt-4o-mini", "gpt-5", "gpt-5-turbo")
-
-    var endpoint by rememberSaveable { mutableStateOf("") }
-    var apiKey by rememberSaveable { mutableStateOf("") }
-    var useProxy by rememberSaveable { mutableStateOf(false) }
-    var proxyType by rememberSaveable { mutableStateOf(proxyTypes.first()) }
-    var proxyHost by rememberSaveable { mutableStateOf("") }
-    var proxyPortText by rememberSaveable { mutableStateOf("") }
-    var proxyUser by rememberSaveable { mutableStateOf("") }
-    var proxyPass by rememberSaveable { mutableStateOf("") }
-    var model by rememberSaveable { mutableStateOf(models.first()) }
-
-    LaunchedEffect(Unit) {
-        endpoint = loadString(p, "endpoint", "https://api.openai.com")
-        apiKey = loadString(p, "api_key", "")
-        useProxy = p.getBoolean("use_proxy", false)
-        proxyType = loadString(p, "proxy_type", proxyTypes.first()).let { if (it in proxyTypes) it else proxyTypes.first() }
-        proxyHost = loadString(p, "proxy_host", "")
-        proxyPortText = loadInt(p, "proxy_port", 0).takeIf { it > 0 }?.toString() ?: ""
-        proxyUser = loadString(p, "proxy_user", "")
-        proxyPass = loadString(p, "proxy_pass", "")
-        model = loadString(p, "model", models.first()).let { if (it in models) it else models.first() }
-    }
+    var endpoint by rememberSaveable { mutableStateOf(p.getString("endpoint", "https://api.openai.com") ?: "") }
+    var apiKey by rememberSaveable { mutableStateOf(p.getString("api_key", "") ?: "") }
+    var useProxy by rememberSaveable { mutableStateOf(p.getBoolean("use_proxy", false)) }
+    var proxyType by rememberSaveable { mutableStateOf(p.getString("proxy_type", "HTTP") ?: "HTTP") }
+    var proxyHost by rememberSaveable { mutableStateOf(p.getString("proxy_host", "") ?: "") }
+    var proxyPortText by rememberSaveable { mutableStateOf(p.getInt("proxy_port", 0).takeIf { it > 0 }?.toString() ?: "") }
+    var proxyUser by rememberSaveable { mutableStateOf(p.getString("proxy_user", "") ?: "") }
+    var proxyPass by rememberSaveable { mutableStateOf(p.getString("proxy_pass", "") ?: "") }
+    var model by rememberSaveable { mutableStateOf(p.getString("model", "gpt-5") ?: "gpt-5") }
 
     Scaffold(topBar = { TopAppBar(title = { Text("设置") }) }) { padding ->
         Column(
             Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(value = endpoint, onValueChange = { endpoint = it }, label = { Text("接口地址（Endpoint）") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = apiKey, onValueChange = { apiKey = it }, label = { Text("API Key") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-
+            OutlinedTextField(value = endpoint, onValueChange = { endpoint = it }, label = { Text("接口地址") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = apiKey, onValueChange = { apiKey = it }, label = { Text("API Key") }, modifier = Modifier.fillMaxWidth())
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("使用代理/网关", modifier = Modifier.weight(1f))
                 Switch(checked = useProxy, onCheckedChange = { useProxy = it })
             }
+            OutlinedTextField(enabled = useProxy, value = proxyHost, onValueChange = { proxyHost = it }, label = { Text("代理Host") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(enabled = useProxy, value = proxyPortText, onValueChange = { proxyPortText = it.filter { c -> c.isDigit() }.take(5) }, label = { Text("端口") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(enabled = useProxy, value = proxyUser, onValueChange = { proxyUser = it }, label = { Text("用户名") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(enabled = useProxy, value = proxyPass, onValueChange = { proxyPass = it }, label = { Text("密码") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = model, onValueChange = { model = it }, label = { Text("模型名称") }, modifier = Modifier.fillMaxWidth())
 
-            ExposedDropdown(label = "代理/网关类型", options = proxyTypes, selected = proxyType, enabled = useProxy) { proxyType = it }
-            OutlinedTextField(enabled = useProxy, value = proxyHost, onValueChange = { proxyHost = it }, label = { Text("代理/网关 Host") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(enabled = useProxy, value = proxyPortText, onValueChange = { proxyPortText = it.filter { ch -> ch.isDigit() }.take(5) }, label = { Text("端口") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(enabled = useProxy, value = proxyUser, onValueChange = { proxyUser = it }, label = { Text("用户名（可选）") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(enabled = useProxy, value = proxyPass, onValueChange = { proxyPass = it }, label = { Text("密码（可选）") }, singleLine = true, modifier = Modifier.fillMaxWidth())
-
-            ExposedDropdown(label = "模型选择", options = models, selected = model) { model = it }
-
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(onClick = {
                     val port = proxyPortText.toIntOrNull() ?: 0
-                    p.edit()
-                        .putString("endpoint", endpoint.trim())
-                        .putString("api_key", apiKey.trim())
+                    p.edit().putString("endpoint", endpoint).putString("api_key", apiKey)
                         .putBoolean("use_proxy", useProxy)
-                        .putString("proxy_type", proxyType)
-                        .putString("proxy_host", proxyHost.trim())
-                        .putInt("proxy_port", port)
-                        .putString("proxy_user", proxyUser.trim())
-                        .putString("proxy_pass", proxyPass)
-                        .putString("model", model)
-                        .apply()
+                        .putString("proxy_type", proxyType).putString("proxy_host", proxyHost)
+                        .putInt("proxy_port", port).putString("proxy_user", proxyUser)
+                        .putString("proxy_pass", proxyPass).putString("model", model).apply()
                     Toast.makeText(context, "已保存设置", Toast.LENGTH_SHORT).show()
                 }) { Text("保存设置") }
 
-                Button(onClick = {
+                Button(enabled = !testing, onClick = {
+                    testing = true
                     val port = proxyPortText.toIntOrNull() ?: 0
-                    val s = AppSettings(endpoint.trim(), apiKey.trim(), useProxy, proxyType, proxyHost.trim(), port, proxyUser.trim(), proxyPass, model)
+                    val s = AppSettings(endpoint, apiKey, useProxy, proxyType, proxyHost, port, proxyUser, proxyPass, model)
                     scope.launch {
-                        val result = NetDiag.ping(context, s)
-                        Toast.makeText(context, result, Toast.LENGTH_LONG).show()
+                        val r = NetDiag.ping(s)
+                        Toast.makeText(context, r, Toast.LENGTH_LONG).show()
+                        testing = false
                     }
-                }) { Text("连通性测试") }
-
-                Button(onClick = {
-                    val port = proxyPortText.toIntOrNull() ?: 0
-                    val s = AppSettings(endpoint.trim(), apiKey.trim(), useProxy, proxyType, proxyHost.trim(), port, proxyUser.trim(), proxyPass, model)
-                    try {
-                        SmartOrganizer.save(context, s)
-                        Toast.makeText(context, "已保存到智能整理", Toast.LENGTH_SHORT).show()
-                    } catch (e: Throwable) {
-                        Toast.makeText(context, "保存失败: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                }) { Text("保存到智能整理") }
+                }) {
+                    if (testing) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                    else Text("连通性测试")
+                }
             }
-
-            Spacer(Modifier.height(12.dp))
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ExposedDropdown(label: String, options: List<String>, selected: String, enabled: Boolean = true, onSelected: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { if (enabled) expanded = !expanded }) {
-        OutlinedTextField(readOnly = true, value = selected, onValueChange = {},
-            label = { Text(label) }, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor().fillMaxWidth(), enabled = enabled)
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            options.forEach { option -> DropdownMenuItem(text = { Text(option) }, onClick = { onSelected(option); expanded = false }) }
         }
     }
 }
