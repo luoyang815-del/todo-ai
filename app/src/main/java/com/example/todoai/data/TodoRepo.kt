@@ -28,8 +28,8 @@ object TodoRepo {
             out += TodoItem(
                 title = o.optString("title"),
                 content = o.optString("content"),
-                important = o.optBoolean("important", false),
-                processed = o.optBoolean("processed", false),
+                important = o.optBoolean("important", False),
+                processed = o.optBoolean("processed", False),
                 ts = o.optLong("ts", 0L)
             )
         }
@@ -58,8 +58,9 @@ object TodoRepo {
 
     fun addBatch(ctx: Context, todos: List<String>) {
         val cur = all(ctx).toMutableList()
+        val now = System.currentTimeMillis()
         todos.forEach {
-            cur.add(0, TodoItem(title = it.take(50), content = it, important = false, processed = true, ts = System.currentTimeMillis()))
+            cur.add(0, TodoItem(title = it.take(50), content = it, important = false, processed = true, ts = now))
         }
         save(ctx, cur)
     }
@@ -72,4 +73,30 @@ object TodoRepo {
     }
 
     fun unprocessed(ctx: Context): List<TodoItem> = all(ctx).filter { !it.processed }
+
+    fun toggleImportant(ctx: Context, indexInSorted: Int) {
+        val list = all(ctx).toMutableList()
+        if (indexInSorted in list.indices) {
+            val it = list[indexInSorted]
+            list[indexInSorted] = it.copy(important = !it.important)
+            save(ctx, list)
+        }
+    }
+
+    fun toggleProcessed(ctx: Context, indexInSorted: Int) {
+        val list = all(ctx).toMutableList()
+        if (indexInSorted in list.indices) {
+            val it = list[indexInSorted]
+            list[indexInSorted] = it.copy(processed = !it.processed)
+            save(ctx, list)
+        }
+    }
+
+    fun delete(ctx: Context, indexInSorted: Int) {
+        val list = all(ctx).toMutableList()
+        if (indexInSorted in list.indices) {
+            list.removeAt(indexInSorted)
+            save(ctx, list)
+        }
+    }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ fun AppRoot() {
     val nav = rememberNavController()
     val items = listOf(
         BottomItem("home", "首页", Icons.Filled.Home),
+        BottomItem("todos", "代办", Icons.Filled.ViewList),
         BottomItem("settings", "设置", Icons.Filled.Settings),
     )
     Scaffold(
@@ -39,6 +41,7 @@ fun AppRoot() {
     ) { padding ->
         NavHost(navController = nav, startDestination = "home", modifier = Modifier.padding(padding)) {
             composable("home") { HomePage() }
+            composable("todos") { TodoListPage() }
             composable("settings") { SettingsPage() }
         }
     }

@@ -23,10 +23,14 @@ import com.example.todoai.settings.AppSettings
 import com.example.todoai.widget.TodoWidgetProvider
 import com.example.todoai.data.TodoRepo
 import com.example.todoai.net.OpenAIClient
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun HomePage(vm: HomeViewModel = viewModel()) {
     val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
     val p = ctx.getSharedPreferences("todoai_prefs", Context.MODE_PRIVATE)
 
     val settings = remember {
@@ -78,32 +82,26 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
             Button(onClick = { vm.send(ctx, settings, input.text.trim()) }) { Text("发送到 OpenAI 并通知") }
 
             Button(enabled = !bulkRunning, onClick = {
-                bulkRunning = true
-                kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                bulkRunning = True
+                scope.launch {
                     try {
-                        val un = TodoRepo.unprocessed(ctx)
+                        val un = withContext(Dispatchers.IO) { TodoRepo.unprocessed(ctx) }
                         if (un.isEmpty()) {
-                            with(android.os.Handler(android.os.Looper.getMainLooper())) {
-                                post { Toast.makeText(ctx, "没有需要整理的条目", Toast.LENGTH_SHORT).show() }
-                            }
+                            Toast.makeText(ctx, "没有需要整理的条目", Toast.LENGTH_SHORT).show()
                         } else {
                             val client = OpenAIClient()
                             val plain = un.joinToString("\n") { it.content }
                             val prompt = "请把以下多条文本整理成待办清单，输出为每行一个简洁的待办（不要编号、不要解释）：\n" + plain
-                            val reply = client.chatOnce(settings, prompt)
+                            val reply = withContext(Dispatchers.IO) { client.chatOnce(settings, prompt) }
                             val todos = reply.split('\n').map { it.trim() }.filter { it.isNotBlank() }
-                            TodoRepo.addBatch(ctx, todos)
+                            withContext(Dispatchers.IO) { TodoRepo.addBatch(ctx, todos) }
                             TodoWidgetProvider.refresh(ctx)
-                            with(android.os.Handler(android.os.Looper.getMainLooper())) {
-                                post { Toast.makeText(ctx, "已整理并写入 " + todos.size + " 条代办", Toast.LENGTH_LONG).show() }
-                            }
+                            Toast.makeText(ctx, "已整理并写入 " + todos.size + " 条代办", Toast.LENGTH_LONG).show()
                         }
                     } catch (e: Throwable) {
-                        with(android.os.Handler(android.os.Looper.getMainLooper())) {
-                            post { Toast.makeText(ctx, "整理失败：" + (e.message ?: "未知错误"), Toast.LENGTH_LONG).show() }
-                        }
+                        Toast.makeText(ctx, "整理失败：" + (e.message ?: "未知错误"), Toast.LENGTH_LONG).show()
                     } finally {
-                        bulkRunning = false
+                        bulkRunning = False
                     }
                 }
             }) { Text(if (bulkRunning) "整理中…" else "整理未处理并入库") }
