@@ -1,4 +1,4 @@
-// app/build.gradle.kts (PATCHED)
+// app/build.gradle.kts (PATCHED for Home features)
 plugins {
     id("com.android.application") version "8.5.2"
     kotlin("android") version "2.0.0"
@@ -32,9 +32,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.android.material:material:1.12.0")
-
-    // NEW: Navigation-Compose
     implementation("androidx.navigation:navigation-compose:2.8.3")
+
+    // NEW: Networking + Coroutines
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.json:json:20240303")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
