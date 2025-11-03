@@ -20,23 +20,24 @@ class OpenAIClient {
             .readTimeout(java.time.Duration.ofSeconds(60))
             .writeTimeout(java.time.Duration.ofSeconds(60))
 
-        val type = s.proxyType.uppercase()
-        val host = s.proxyHost
-        val port = s.proxyPort
-
-        if (host.isNotBlank() && port > 0) {
-            val proxyType = when (type) {
-                "SOCKS5" -> Proxy.Type.SOCKS
-                "HTTPS", "GATEWAY", "HTTP" -> Proxy.Type.HTTP
-                else -> null
-            }
-            if (proxyType != null) {
-                val proxy = Proxy(proxyType, InetSocketAddress(host, port))
-                b.proxy(proxy)
-                if (s.proxyUser.isNotBlank() || s.proxyPass.isNotBlank()) {
-                    b.proxyAuthenticator { _, response ->
-                        val credential = Credentials.basic(s.proxyUser, s.proxyPass)
-                        response.request.newBuilder().header("Proxy-Authorization", credential).build()
+        if (s.useProxy) {
+            val type = s.proxyType.uppercase()
+            val host = s.proxyHost
+            val port = s.proxyPort
+            if (host.isNotBlank() && port > 0) {
+                val proxyType = when (type) {
+                    "SOCKS5" -> Proxy.Type.SOCKS
+                    "HTTPS", "GATEWAY", "HTTP" -> Proxy.Type.HTTP
+                    else -> null
+                }
+                if (proxyType != null) {
+                    val proxy = Proxy(proxyType, InetSocketAddress(host, port))
+                    b.proxy(proxy)
+                    if (s.proxyUser.isNotBlank() || s.proxyPass.isNotBlank()) {
+                        b.proxyAuthenticator { _, response ->
+                            val credential = Credentials.basic(s.proxyUser, s.proxyPass)
+                            response.request.newBuilder().header("Proxy-Authorization", credential).build()
+                        }
                     }
                 }
             }

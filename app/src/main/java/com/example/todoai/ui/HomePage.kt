@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,11 +27,11 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
     val ctx = LocalContext.current
     val p = ctx.getSharedPreferences("todoai_prefs", Context.MODE_PRIVATE)
 
-    // 从设置读取参数
     val settings = remember {
         AppSettings(
             endpoint = p.getString("endpoint", "https://api.openai.com") ?: "https://api.openai.com",
             apiKey = p.getString("api_key", "") ?: "",
+            useProxy = p.getBoolean("use_proxy", false),
             proxyType = p.getString("proxy_type", "HTTP") ?: "HTTP",
             proxyHost = p.getString("proxy_host", "") ?: "",
             proxyPort = try { p.getInt("proxy_port", 0) } catch (_: Exception) { (p.getString("proxy_port", "0") ?: "0").toIntOrNull() ?: 0 },
@@ -86,7 +87,8 @@ private fun requestPinWidget(ctx: Context) {
     val cn = ComponentName(ctx, TodoWidgetProvider::class.java)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mgr.isRequestPinAppWidgetSupported) {
         mgr.requestPinAppWidget(cn, null, null)
+        Toast.makeText(ctx, "已请求添加，请在弹出的系统对话框确认。", Toast.LENGTH_LONG).show()
     } else {
-        android.widget.Toast.makeText(ctx, "请在桌面长按空白处 → 添加小组件 → 选择 Todo AI", android.widget.Toast.LENGTH_LONG).show()
+        Toast.makeText(ctx, "你的桌面不支持一键固定，请长按桌面空白处 → 添加小组件 → Todo AI。", Toast.LENGTH_LONG).show()
     }
 }
