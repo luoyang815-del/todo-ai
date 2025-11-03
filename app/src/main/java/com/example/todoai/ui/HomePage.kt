@@ -82,7 +82,7 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
             Button(onClick = { vm.send(ctx, settings, input.text.trim()) }) { Text("发送到 OpenAI 并通知") }
 
             Button(enabled = !bulkRunning, onClick = {
-                bulkRunning = True
+                bulkRunning = true
                 scope.launch {
                     try {
                         val un = withContext(Dispatchers.IO) { TodoRepo.unprocessed(ctx) }
@@ -101,7 +101,7 @@ fun HomePage(vm: HomeViewModel = viewModel()) {
                     } catch (e: Throwable) {
                         Toast.makeText(ctx, "整理失败：" + (e.message ?: "未知错误"), Toast.LENGTH_LONG).show()
                     } finally {
-                        bulkRunning = False
+                        bulkRunning = false
                     }
                 }
             }) { Text(if (bulkRunning) "整理中…" else "整理未处理并入库") }

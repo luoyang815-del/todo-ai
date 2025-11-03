@@ -6,6 +6,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 data class TodoItem(
+    val id: Long,
     val title: String,
     val content: String,
     val important: Boolean,
@@ -25,12 +26,14 @@ object TodoRepo {
         val out = mutableListOf<TodoItem>()
         for (i in 0 until arr.length()) {
             val o = arr.optJSONObject(i) ?: continue
+            val ts = o.optLong("ts", System.currentTimeMillis())
             out += TodoItem(
+                id = o.optLong("id", ts),
                 title = o.optString("title"),
                 content = o.optString("content"),
-                important = o.optBoolean("important", False),
-                processed = o.optBoolean("processed", False),
-                ts = o.optLong("ts", 0L)
+                important = o.optBoolean("important", false),
+                processed = o.optBoolean("processed", false),
+                ts = ts
             )
         }
         return out.sortedByDescending { it.ts }
@@ -40,6 +43,7 @@ object TodoRepo {
         val arr = JSONArray()
         list.forEach {
             arr.put(JSONObject()
+                .put("id", it.id)
                 .put("title", it.title)
                 .put("content", it.content)
                 .put("important", it.important)
@@ -51,16 +55,20 @@ object TodoRepo {
     }
 
     fun addLocal(ctx: Context, text: String) {
+        val now = System.currentTimeMillis()
         val cur = all(ctx).toMutableList()
-        cur.add(0, TodoItem(title = text.take(50), content = text, important = false, processed = false, ts = System.currentTimeMillis()))
+        cur.add(0, TodoItem(id = now, title = text.take(50), content = text, important = false, processed = false, ts = now))
         save(ctx, cur)
     }
 
     fun addBatch(ctx: Context, todos: List<String>) {
-        val cur = all(ctx).toMutableList()
         val now = System.currentTimeMillis()
+        val cur = all(ctx).toMutableList()
         todos.forEach {
-            cur.add(0, TodoItem(title = it.take(50), content = it, important = false, processed = true, ts = now))
+            val t = it.trim()
+            if (t.isNotEmpty()) {
+                cur.add(0, TodoItem(id = System.nanoTime(), title = t.take(50), content = t, important = false, processed = true, ts = now))
+            }
         }
         save(ctx, cur)
     }
@@ -74,29 +82,63 @@ object TodoRepo {
 
     fun unprocessed(ctx: Context): List<TodoItem> = all(ctx).filter { !it.processed }
 
-    fun toggleImportant(ctx: Context, indexInSorted: Int) {
+    fun getById(ctx: Context, id: Long): TodoItem? = all(ctx).firstOrNull { it.id == id }
+
+    fun updateById(ctx: Context, id: Long, title: String, content: String, important: Boolean, processed: Boolean) {
         val list = all(ctx).toMutableList()
-        if (indexInSorted in list.indices) {
-            val it = list[indexInSorted]
-            list[indexInSorted] = it.copy(important = !it.important)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            val old = list[idx]
+            list[idx] = old.copy(title = title, content = content, important = important, processed = processed)
             save(ctx, list)
         }
     }
 
-    fun toggleProcessed(ctx: Context, indexInSorted: Int) {
+    fun toggleImportantById(ctx: Context, id: Long) {
         val list = all(ctx).toMutableList()
-        if (indexInSorted in list.indices) {
-            val it = list[indexInSorted]
-            list[indexInSorted] = it.copy(processed = !it.processed)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            val it = list[idx]
+            list[idx] = it.copy(important = !it.important)
             save(ctx, list)
         }
     }
 
-    fun delete(ctx: Context, indexInSorted: Int) {
+    fun toggleProcessedById(ctx: Context, id: Long) {
         val list = all(ctx).toMutableList()
-        if (indexInSorted in list.indices) {
-            list.removeAt(indexInSorted)
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            val it = list[idx]
+            list[idx] = it.copy(processed = !it.processed)
             save(ctx, list)
         }
+    }
+
+    fun deleteById(ctx: Context, id: Long) {
+        val list = all(ctx).toMutableList()
+        val idx = list.indexOfFirst { it.id == id }
+        if (idx >= 0) {
+            list.removeAt(idx)
+            save(ctx, list)
+        }
+    }
+
+    fun bulkDelete(ctx: Context, ids: Collection<Long>) {
+        val list = all(ctx).filterNot { ids.contains(it.id) }
+        save(ctx, list)
+    }
+
+    fun bulkMarkImportant(ctx: Context, ids: Collection<Long>, value: Boolean) {
+        val list = all(ctx).map {
+            if (ids.contains(it.id)) it.copy(important = value) else it
+        }
+        save(ctx, list)
+    }
+
+    fun bulkMarkProcessed(ctx: Context, ids: Collection<Long>, value: Boolean) {
+        val list = all(ctx).map {
+            if (ids.contains(it.id)) it.copy(processed = value) else it
+        }
+        save(ctx, list)
     }
 }
