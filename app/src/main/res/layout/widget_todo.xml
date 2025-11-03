@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:padding="12dp"
-    android:background="@android:color/transparent"
+    android:background="#FFFFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,26 +10,36 @@
         android:id="@+id/tv_header"
         android:text="Todo AI"
         android:textStyle="bold"
+        android:textColor="#222222"
         android:textSize="16sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:background="#E6E6E6"/>
+
     <TextView
         android:id="@+id/tv_total"
         android:text="总数：0"
+        android:textColor="#333333"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/tv_important"
         android:text="重要：0"
+        android:textColor="#333333"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/tv_top"
         android:text="Top：10"
+        android:textColor="#333333"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>
