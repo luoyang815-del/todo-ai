@@ -1,1 +1,1 @@
-// Minimal placeholder for SettingsPage with correct package
+// SettingsPage placeholder

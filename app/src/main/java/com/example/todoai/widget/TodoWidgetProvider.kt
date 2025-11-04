@@ -1,1 +1,1 @@
-// Minimal placeholder for TodoWidgetProvider
+// WidgetProvider placeholder
