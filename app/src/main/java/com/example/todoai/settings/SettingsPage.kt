@@ -1,1 +1,1 @@
-// SettingsPage UI here
+// SettingsPage UI composable

@@ -1,1 +1,1 @@
-// AppSettings logic here
+// AppSettings full code

@@ -1,1 +1,1 @@
-// Widget logic here
+// AppWidgetProvider logic

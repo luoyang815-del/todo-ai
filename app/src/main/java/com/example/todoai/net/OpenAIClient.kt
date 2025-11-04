@@ -1,1 +1,1 @@
-// OpenAIClient logic here
+// chatOnce and testConnectivity logic
