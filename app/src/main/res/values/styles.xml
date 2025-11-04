@@ -1,8 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.TodoAI" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@android:color/holo_blue_bright</item>
-        <item name="colorOnPrimary">@android:color/white</item>
-    </style>
-    <style name="Theme.TodoAI.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar" />
-</resources>
+<resources><style name="Theme.TodoAI" parent="Theme.Material3.DayNight.NoActionBar"/></resources>
