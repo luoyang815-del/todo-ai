@@ -1,1 +1,1 @@
-// TODO: Full widget class
+// Widget logic here
