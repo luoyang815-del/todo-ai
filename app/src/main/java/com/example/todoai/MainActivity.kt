@@ -1,1 +1,28 @@
-// MainActivity.kt with NavHost (Chat, Settings, Todo)
+package com.example.todoai
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.*
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    Column(Modifier.padding(16.dp)) {
+                        Text("你好，AI 助手")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(onClick = {}) {
+                            Text("点击我")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
