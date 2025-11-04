@@ -1,1 +1,1 @@
-// AppSettings.kt
+// Settings logic

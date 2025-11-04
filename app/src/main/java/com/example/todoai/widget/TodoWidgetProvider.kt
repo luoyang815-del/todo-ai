@@ -1,1 +1,1 @@
-// TodoWidgetProvider.kt
+// Widget logic
