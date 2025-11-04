@@ -1,1 +1,1 @@
-// chatOnce and testConnectivity logic
+// OpenAIClient.kt

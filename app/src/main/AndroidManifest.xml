@@ -1,16 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.todoai">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:allowBackup="true"
-        android:label="AI助手"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="AI助手"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.TodoAI">
+        android:theme="@style/Theme.TodoAI.NoActionBar">
         <activity android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.TodoAI.NoActionBar"
-            android:configChanges="orientation|screenSize">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

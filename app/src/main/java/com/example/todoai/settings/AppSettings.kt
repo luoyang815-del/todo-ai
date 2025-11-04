@@ -1,1 +1,1 @@
-// AppSettings full code
+// AppSettings.kt

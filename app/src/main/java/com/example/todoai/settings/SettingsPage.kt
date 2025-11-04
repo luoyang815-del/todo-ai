@@ -1,1 +1,1 @@
-// SettingsPage UI composable
+// SettingsPage.kt
