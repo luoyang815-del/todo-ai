@@ -1,1 +1,8 @@
-// Top-level Gradle script
+// Top-level build
+buildscript {
+    repositories { google(); mavenCentral() }
+    dependencies {}
+}
+allprojects {
+    repositories { google(); mavenCentral() }
+}

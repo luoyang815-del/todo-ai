@@ -6,7 +6,6 @@ plugins {
 android {
     namespace 'com.example.todoai'
     compileSdk 33
-
     defaultConfig {
         applicationId "com.example.todoai"
         minSdk 24
@@ -14,18 +13,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
-    buildFeatures {
-        compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.4.7'
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+    buildFeatures { compose true }
+    composeOptions { kotlinCompilerExtensionVersion '1.4.7' }
+    kotlinOptions { jvmTarget = '1.8' }
 }
 
 dependencies {

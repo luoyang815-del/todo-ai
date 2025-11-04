@@ -15,10 +15,10 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("你好，AI 助手")
+                        Text("你好，GPT 代办助手")
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {}) {
-                            Text("点击我")
+                            Text("点我聊天")
                         }
                     }
                 }
