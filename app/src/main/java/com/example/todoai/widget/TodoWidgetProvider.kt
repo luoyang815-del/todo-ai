@@ -1,1 +1,1 @@
-// [WIDGET PROVIDER FIXED IMPLEMENTATION PLACEHOLDER]
+// Minimal placeholder for TodoWidgetProvider
