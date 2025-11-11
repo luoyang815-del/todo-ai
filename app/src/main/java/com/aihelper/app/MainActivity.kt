@@ -119,7 +119,7 @@ fun ChatTab(onLog: (String) -> Unit) {
 
         Button(onClick = {
             scope.launch {
-                val proxy = proxyFlow(ctx).first()
+                val proxy = proxyFlow(ctx).first().toTypedArray().toTypedArray()
                 val gateway = gatewayFlow(ctx).first()
                 val token = encryptedPrefs(ctx).getString("token", "") ?: ""
                 try {
@@ -177,7 +177,7 @@ fun SettingsTab(onLog: (String) -> Unit) {
 
             Button(onClick = {
                 scope.launch {
-                    val proxy = proxyFlow(ctx).first()
+                    val proxy = proxyFlow(ctx).first().toTypedArray().toTypedArray()
                     val tk = encryptedPrefs(ctx).getString("token", "") ?: ""
                     val res = Repo(ctx).syncNow(tk, server, proxy, lastTodo, lastMsg, pinHost, pinSha256, trustCA)
                     onLog("立即同步: " + res)

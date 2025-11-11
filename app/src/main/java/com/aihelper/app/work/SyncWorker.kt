@@ -13,7 +13,7 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
     }
     override suspend fun doWork(): Result = try {
         val ctx = applicationContext
-        val proxy = proxyFlow(ctx).first()
+        val proxy = proxyFlow(ctx).first().toTypedArray()
         val tk = encryptedPrefs(ctx).getString("token","") ?: ""
         val server = serverFlow(ctx).first()
         val lastTodo = lastSyncTodoFlow(ctx).first()
