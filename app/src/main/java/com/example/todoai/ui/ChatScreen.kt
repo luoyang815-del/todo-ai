@@ -1,1 +1,0 @@
-// Chat screen using OpenAI API with proxy/model options
