@@ -3,7 +3,9 @@ package com.aihelper.app
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "todos")
 data class Todo(
     @PrimaryKey val id: String,
@@ -16,6 +18,7 @@ data class Todo(
     val source: String = "client"
 )
 
+@Serializable
 @Entity(tableName = "messages")
 data class Message(
     @PrimaryKey val id: String,

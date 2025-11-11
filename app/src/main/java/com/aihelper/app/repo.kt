@@ -32,24 +32,24 @@ class Repo(private val ctx: Context) {
         withContext(Dispatchers.IO){ msgDao.upsert(m) }
     }
 
-    suspend fun syncNow(token:String, server:String, proxy:Array<Any>): String =
+    suspend fun syncNow(token:String, server:String, proxy:Array<Any>, since:Long): String =
         withContext(Dispatchers.IO){
-            val http = okHttpWithProxy(proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "")
+            val http = okHttp(proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "", "", "")
             val api = retrofitFor(server, http).create(SyncApi::class.java)
             val todos = todoDao.observe().first()
             val msgs  = msgDao.observe().first()
-            val since = 0L
             api.push("Bearer $token", SyncBatch(clientId, since, todos, msgs))
             val pull = api.pull("Bearer $token", since)
             todoDao.upsertAll(pull.todos)
             msgDao.upsertAll(pull.messages)
             refreshWidget()
+            saveLastSync(ctx, pull.ts)
             "ok ts=${pull.ts}"
         }
 
-    suspend fun chatOnce(gateway:String, token:String, proxy:Array<Any>, model:String, userText:String): String =
+    suspend fun chatOnce(gateway:String, token:String, proxy:Array<Any>, model:String, userText:String, pinHost:String="", pinSha256:String=""): String =
         withContext(Dispatchers.IO){
-            val http = okHttpWithProxy(proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "")
+            val http = okHttp(proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "", pinHost, pinSha256)
             val api = retrofitFor(gateway, http).create(OpenAiApi::class.java)
             val req = ChatReq(model, listOf(ChatMsg("user", userText)))
             val resp = api.chat("Bearer $token", req)

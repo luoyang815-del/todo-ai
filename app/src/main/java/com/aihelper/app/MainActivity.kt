@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.aihelper.app.work.SyncWorker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -23,10 +24,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val ctx = androidx.compose.ui.platform.LocalContext.current
-    val scope = rememberCoroutineScope()
     var tab by remember { mutableStateOf(0) }
     var log by remember { mutableStateOf("") }
-
     MaterialTheme {
         Column(Modifier.fillMaxSize().padding(12.dp)) {
             TabRow(selectedTabIndex = tab) {
@@ -58,6 +57,7 @@ fun TodoTab(onLog:(String)->Unit){
     }
     Spacer(Modifier.height(8.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onClick = { androidx.lifecycle.lifecycleScope.launchWhenResumed {} }) { Text("占位") }
         Button(onClick = {
             scope.launch { Repo(ctx).addTodo(title, content); onLog("已写入代办"); Noti.notify(ctx,"代办","已写入本地") }
         }){ Text("写入本地") }
@@ -73,10 +73,14 @@ fun ChatTab(onLog:(String)->Unit){
     val scope = rememberCoroutineScope()
     var text by remember { mutableStateOf("你好，帮我总结今天代办") }
     var model by remember { mutableStateOf("gpt-4o-mini") }
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(value=model, onValueChange={model=it}, label={Text("模型")}, modifier=Modifier.weight(1f))
-    }
+    var pinHost by remember { mutableStateOf("") }
+    var pinSha256 by remember { mutableStateOf("") }
+    OutlinedTextField(value=model, onValueChange={model=it}, label={Text("模型")}, modifier=Modifier.fillMaxWidth())
     OutlinedTextField(value=text, onValueChange={text=it}, label={Text("输入")}, modifier=Modifier.fillMaxWidth())
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(value=pinHost, onValueChange={pinHost=it}, label={Text("Pin 主机（可选）")}, modifier=Modifier.weight(1f))
+        OutlinedTextField(value=pinSha256, onValueChange={pinSha256=it}, label={Text("Pin SHA256（去掉sha256/）")}, modifier=Modifier.weight(1f))
+    }
     Spacer(Modifier.height(8.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = {
@@ -88,7 +92,7 @@ fun ChatTab(onLog:(String)->Unit){
                 val gateway = gatewayFlow(ctx).first()
                 val token = encryptedPrefs(ctx).getString("token","") ?: ""
                 try {
-                    val ans = Repo(ctx).chatOnce(gateway, token, proxy, model, text)
+                    val ans = Repo(ctx).chatOnce(gateway, token, proxy, model, text, pinHost, pinSha256)
                     onLog("网关返回: " + ans.take(120))
                     Noti.notify(ctx, "聊天完成", ans.take(40))
                 } catch (e: Exception) {
@@ -112,39 +116,30 @@ fun SettingsTab(onLog:(String)->Unit){
     var proxyUser by remember { mutableStateOf("") }
     var proxyPass by remember { mutableStateOf("") }
     var token by remember { mutableStateOf("") }
+    var lastSync by remember { mutableStateOf(0L) }
 
     LaunchedEffect(Unit){ serverFlow(ctx).collect{ server = it } }
     LaunchedEffect(Unit){ gatewayFlow(ctx).collect{ gateway = it } }
+    LaunchedEffect(Unit){ lastSyncFlow(ctx).collect{ lastSync = it } }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("同步设置", style=MaterialTheme.typography.titleMedium)
+        Text("同步设置（增量 since=last_sync）", style=MaterialTheme.typography.titleMedium)
         OutlinedTextField(server, {server=it}, label={Text("服务器")}, modifier=Modifier.fillMaxWidth())
         OutlinedTextField(token, {token=it}, label={Text("Token（仅本机）")}, visualTransformation=PasswordVisualTransformation(), modifier=Modifier.fillMaxWidth())
+        Text("上次同步时间戳: $lastSync")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = {
-                scope.launch {
-                    saveServer(ctx, server)
-                    encryptedPrefs(ctx).edit().putString("token", token).apply()
-                    onLog("已保存服务器/Token")
-                }
+                scope.launch { saveServer(ctx, server); encryptedPrefs(ctx).edit().putString("token", token).apply(); onLog("已保存服务器/Token") }
             }){ Text("保存同步") }
             Button(onClick = {
                 scope.launch {
                     val proxy = proxyFlow(ctx).first()
                     val tk = encryptedPrefs(ctx).getString("token","") ?: ""
-                    onLog("server="+server+", token.len="+tk.length+", proxy="+proxy.contentToString())
-                }
-            }){ Text("检查配置") }
-            Button(onClick = {
-                scope.launch {
-                    val proxy = proxyFlow(ctx).first()
-                    val tk = encryptedPrefs(ctx).getString("token","") ?: ""
-                    val res = Repo(ctx).syncNow(tk, server, proxy)
-                    onLog("同步结果: "+res); Noti.notify(ctx,"同步",res)
+                    val res = Repo(ctx).syncNow(tk, server, proxy, lastSync)
+                    onLog("立即同步: "+res); Noti.notify(ctx,"同步",res)
                 }
             }){ Text("立即同步") }
         }
-
         Divider()
         Text("代理 / 网关", style=MaterialTheme.typography.titleMedium)
         OutlinedTextField(gateway, {gateway=it}, label={Text("网关 BaseURL")}, modifier=Modifier.fillMaxWidth())
@@ -170,6 +165,12 @@ fun SettingsTab(onLog:(String)->Unit){
                     onLog("已保存代理/网关")
                 }
             }){ Text("保存代理设置") }
+        }
+        Divider()
+        Text("自动同步（WorkManager 周期任务）", style=MaterialTheme.typography.titleMedium)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { SyncWorker.start(ctx, 15); onLog("自动同步：已开启（15 分钟）") }){ Text("开启") }
+            Button(onClick = { SyncWorker.stop(ctx); onLog("自动同步：已关闭") }){ Text("关闭") }
         }
     }
 }

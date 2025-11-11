@@ -26,9 +26,7 @@ class TodosWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: android.content.Context, id: GlanceId) {
         val repo = Repo(context)
         val list = runBlocking { repo.top3() }
-        provideContent {
-            WidgetUI(list.map { "• " + (it.title.ifBlank { it.content }.take(24)) })
-        }
+        provideContent { WidgetUI(list.map { "• " + (it.title.ifBlank{it.content}.take(24)) }) }
     }
 }
 
@@ -37,16 +35,13 @@ fun WidgetUI(lines: List<String>) {
     Column(
         modifier = GlanceModifier
             .appWidgetBackground()
-            .background(ColorProvider(android.graphics.Color.argb(110, 0, 0, 0))) // 半透明
+            .background(ColorProvider(android.graphics.Color.argb(110, 0, 0, 0)))
             .padding(12.dp)
     ) {
         Text("AI 助手 · 代办", style = TextStyle(color = ColorProviders.white))
         Spacer(GlanceModifier.height(8.dp))
-        if (lines.isEmpty()) {
-            Text("暂无代办", style = TextStyle(color = ColorProviders.white))
-        } else {
-            lines.forEach { s -> Text(s, maxLines = 1, style = TextStyle(color = ColorProviders.white), overflow = TextOverflow.Ellipsis) }
-        }
+        if (lines.isEmpty()) Text("暂无代办", style = TextStyle(color = ColorProviders.white))
+        else lines.forEach { s -> Text(s, maxLines = 1, style = TextStyle(color = ColorProviders.white), overflow = TextOverflow.Ellipsis) }
     }
 }
 
