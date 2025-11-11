@@ -25,7 +25,7 @@ class TodosWidget : GlanceAppWidget() {
         provideContent { WidgetUI(list.map { "• " + ( it.title.ifBlank{ it.content }.take(24) ) }) }
     }
 }
-@Composable fun WidgetUI(lines: List<String>) {
+@Composable fun WidgetUI(lines: List<String]) {
     Column(modifier = GlanceModifier.appWidgetBackground().background(ColorProvider(android.graphics.Color.argb(110, 0, 0, 0))).padding(12.dp)) {
         Text("AI 助手 · 代办", style = TextStyle(color = ColorProviders.white)); Spacer(GlanceModifier.height(8.dp))
         if (lines.isEmpty()) Text("暂无代办", style = TextStyle(color = ColorProviders.white))

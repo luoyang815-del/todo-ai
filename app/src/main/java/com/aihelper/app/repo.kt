@@ -17,7 +17,7 @@ class Repo(private val ctx: Context) {
     private val clientId by lazy { UUID.randomUUID().toString() }
     suspend fun addTodo(title:String, content:String){ val now = System.currentTimeMillis()/1000; val t = Todo(id=UUID.randomUUID().toString(), title=title, content=content, updated_at=now); withContext(Dispatchers.IO){ todoDao.upsert(t) }; refreshWidget() }
     suspend fun addMessage(role:String, content:String){ val now = System.currentTimeMillis()/1000; val m = Message(id=UUID.randomUUID().toString(), role=role, content=content, updated_at=now); withContext(Dispatchers.IO){ msgDao.upsert(m) } }
-    suspend fun syncNow(token:String, server:String, proxy:Array[Any], sinceTodo:Long, sinceMsg:Long, pinHost:String="", pinSha256:String="", trustCA:Boolean=false): String = withContext(Dispatchers.IO){
+    suspend fun syncNow(token:String, server:String, proxy:Array<Any>, sinceTodo:Long, sinceMsg:Long, pinHost:String="", pinSha256:String="", trustCA:Boolean=false): String = withContext(Dispatchers.IO){
         val http = okHttpSecure(ctx, proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "", pinHost, pinSha256, trustCA)
         val api = retrofitFor(server, http).create(SyncApi::class.java)
         val todos = todoDao.observe().first(); val msgs  = msgDao.observe().first()
@@ -27,7 +27,7 @@ class Repo(private val ctx: Context) {
         saveLastSyncTodo(ctx, pull.ts_todo); saveLastSyncMsg(ctx, pull.ts_msg)
         "ok todo_ts=${pull.ts_todo} msg_ts=${pull.ts_msg}"
     }
-    suspend fun chatOnce(gateway:String, token:String, proxy:Array[Any], model:String, userText:String, pinHost:String="", pinSha256:String="", trustCA:Boolean=false): String = withContext(Dispatchers.IO){
+    suspend fun chatOnce(gateway:String, token:String, proxy:Array<Any>, model:String, userText:String, pinHost:String="", pinSha256:String="", trustCA:Boolean=false): String = withContext(Dispatchers.IO){
         val http = okHttpSecure(ctx, proxy[0] as Int, proxy[1] as String, proxy[2] as Int, proxy.getOrNull(3) as? String ?: "", proxy.getOrNull(4) as? String ?: "", pinHost, pinSha256, trustCA)
         val api = retrofitFor(gateway, http).create(OpenAiApi::class.java)
         val req = ChatReq(model, listOf(ChatMsg("user", userText))); val resp = api.chat("Bearer $token", req)

@@ -50,13 +50,13 @@ class MainActivity : ComponentActivity() { override fun onCreate(savedInstanceSt
     var trustCA by remember { mutableStateOf(false) }
     OutlinedTextField(value=model, onValueChange={model=it}, label={Text("模型")}, modifier=Modifier.fillMaxWidth())
     OutlinedTextField(value=text, onValueChange={text=it}, label={Text("输入")}, modifier=Modifier.fillMaxWidth())
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(value=pinHost, onValueChange={pinHost=it}, label={Text("Pin 主机（可选）")}, modifier=Modifier.weight(1f))
         OutlinedTextField(value=pinSha256, onValueChange={pinSha256=it}, label={Text("Pin SHA256（去掉sha256/前缀）")}, modifier=Modifier.weight(1f))
     }
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { FilterChip(selected=trustCA, onClick={ trustCA=!trustCA }, label={ Text("信任自定义 CA（res/raw/ca.pem）") }) }
+    Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { FilterChip(selected=trustCA, onClick={ trustCA=!trustCA }, label={ Text("信任自定义 CA（res/raw/ca.pem）") }) }
     Spacer(Modifier.height(8.dp))
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
         Button(onClick = { scope.launch { Repo(ctx).addMessage("user", text); onLog("已保存聊天（本地）") } }){ Text("保存") }
         Button(onClick = {
             scope.launch {
@@ -89,12 +89,12 @@ class MainActivity : ComponentActivity() { override fun onCreate(savedInstanceSt
     LaunchedEffect(Unit){ lastSyncMsgFlow(ctx).collect{ lastMsg = it } }
     LaunchedEffect(Unit){ pinFlow(ctx).collect{ pinHost = it.first; pinSha256 = it.second } }
     LaunchedEffect(Unit){ trustCAFlow(ctx).collect{ trustCA = it } }
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
         Text("同步设置（分表增量 + 安全）", style=MaterialTheme.typography.titleMedium)
         OutlinedTextField(server, {server=it}, label={Text("服务器")}, modifier=Modifier.fillMaxWidth())
         OutlinedTextField(token, {token=it}, label={Text("Token（仅本机）")}, visualTransformation=PasswordVisualTransformation(), modifier=Modifier.fillMaxWidth())
         Text("last_sync:  todos=%d, messages=%d".format(lastTodo, lastMsg))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
             Button(onClick = { scope.launch { saveServer(ctx, server); encryptedPrefs(ctx).edit().putString("token", token).apply(); onLog("已保存服务器/Token") } }){ Text("保存同步") }
             Button(onClick = {
                 scope.launch {
@@ -107,27 +107,27 @@ class MainActivity : ComponentActivity() { override fun onCreate(savedInstanceSt
         Divider()
         Text("代理 / 网关 / 安全", style=MaterialTheme.typography.titleMedium)
         OutlinedTextField(gateway, {gateway=it}, label={Text("网关 BaseURL")}, modifier=Modifier.fillMaxWidth())
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedTextField(proxyHost, {proxyHost=it}, label={Text("代理主机")}); OutlinedTextField(proxyPort, {proxyPort=it}, label={Text("端口")}) }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedTextField(proxyUser, {proxyUser=it}, label={Text("用户名")}); OutlinedTextField(proxyPass, {proxyPass=it}, label={Text("密码")}, visualTransformation=PasswordVisualTransformation()) }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { OutlinedTextField(proxyHost, {proxyHost=it}, label={Text("代理主机")}); OutlinedTextField(proxyPort, {proxyPort=it}, label={Text("端口")}) }
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { OutlinedTextField(proxyUser, {proxyUser=it}, label={Text("用户名")}); OutlinedTextField(proxyPass, {proxyPass=it}, label={Text("密码")}, visualTransformation=PasswordVisualTransformation()) }
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
             Button(onClick = { proxyType = 0; onLog("代理=无") }){ Text("无") }
             Button(onClick = { proxyType = 1; onLog("代理=HTTP") }){ Text("HTTP") }
             Button(onClick = { proxyType = 2; onLog("代理=HTTPS") }){ Text("HTTPS") }
             Button(onClick = { proxyType = 3; onLog("代理=SOCKS") }){ Text("SOCKS") }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) { Button(onClick = { scope.launch { saveGateway(ctx, gateway); saveProxy(ctx, proxyType, proxyHost, proxyPort.toIntOrNull()?:0, proxyUser, proxyPass); onLog("已保存代理/网关") } }){ Text("保存代理设置") } }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) { Button(onClick = { scope.launch { saveGateway(ctx, gateway); saveProxy(ctx, proxyType, proxyHost, proxyPort.toIntOrNull()?:0, proxyUser, proxyPass); onLog("已保存代理/网关") } }){ Text("保存代理设置") } }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(pinHost, {pinHost=it}, label={Text("Pin 主机")}, modifier=Modifier.weight(1f))
             OutlinedTextField(pinSha256, {pinSha256=it}, label={Text("Pin SHA256（去掉sha256/）")}, modifier=Modifier.weight(1f))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
             Button(onClick = { scope.launch { savePin(ctx, pinHost, pinSha256); onLog("已保存 Pin 配置") } }){ Text("保存 Pin") }
             FilterChip(selected=trustCA, onClick={ trustCA=!trustCA }, label={ Text(if (trustCA) "信任自签 CA：开" else "信任自签 CA：关") })
             Button(onClick = { scope.launch { saveTrustCA(ctx, trustCA); onLog("已保存 CA 信任设置") } }){ Text("保存 CA 设置") }
         }
         Divider()
         Text("自动同步（WorkManager 前台 + 开机自启）", style=MaterialTheme.typography.titleMedium)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
             Button(onClick = { SyncWorker.start(ctx, 15); onLog("自动同步：已开启（15 分钟）") }){ Text("开启") }
             Button(onClick = { SyncWorker.stop(ctx); onLog("自动同步：已关闭") }){ Text("关闭") }
         }

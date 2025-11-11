@@ -1,1 +1,7 @@
-<resources><style name="Theme.App" parent="Theme.Material3.DayNight.NoActionBar"><item name="android:statusBarColor">@android:color/transparent</item></style></resources>
+
+<resources>
+  <!-- Fix: use Material3 standard parent to avoid 'NoActionBar not found' -->
+  <style name="Theme.App" parent="Theme.Material3.DayNight">
+    <item name="android:statusBarColor">@android:color/transparent</item>
+  </style>
+</resources>
