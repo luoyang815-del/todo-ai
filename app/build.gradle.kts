@@ -7,6 +7,7 @@ plugins {
     id("com.google.devtools.ksp")
 }
 android {
+    defaultConfig { javaCompileOptions { annotationProcessorOptions { arguments += mapOf("room.schemaLocation" to "$projectDir/schemas") } } }
     namespace = "com.aihelper.app"
     compileSdk = 35
     defaultConfig {
