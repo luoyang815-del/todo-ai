@@ -11,9 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.aihelper.app.work.SyncWorker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); setContent { App() } }
-}
+class MainActivity : ComponentActivity() { override fun onCreate(savedInstanceState: Bundle?) { super.onCreate(savedInstanceState); setContent { App() } } }
 @Composable fun App() {
     val ctx = androidx.compose.ui.platform.LocalContext.current
     var tab by remember { mutableStateOf(0) }
