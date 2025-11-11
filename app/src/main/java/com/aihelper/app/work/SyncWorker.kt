@@ -1,3 +1,4 @@
+
 package com.aihelper.app.work
 import android.content.Context
 import androidx.core.app.NotificationCompat
@@ -13,7 +14,7 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
     }
     override suspend fun doWork(): Result = try {
         val ctx = applicationContext
-        val proxy = proxyFlow(ctx).first().toTypedArray()
+        val proxy = proxyFlow(ctx).first()
         val tk = encryptedPrefs(ctx).getString("token","") ?: ""
         val server = serverFlow(ctx).first()
         val lastTodo = lastSyncTodoFlow(ctx).first()
@@ -24,7 +25,7 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
         Result.success()
     } catch (e: Exception) { Result.retry() }
     companion object {
-        private const val UNIQUE = "auto_sync_v22"
+        private const val UNIQUE = "auto_sync_v227"
         fun start(ctx: Context, minutes: Long = 15){ val req = PeriodicWorkRequestBuilder<SyncWorker>(minutes, TimeUnit.MINUTES).build(); WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(UNIQUE, ExistingPeriodicWorkPolicy.UPDATE, req) }
         fun stop(ctx: Context){ WorkManager.getInstance(ctx).cancelUniqueWork(UNIQUE) }
     }

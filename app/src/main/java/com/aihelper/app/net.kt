@@ -1,7 +1,9 @@
+
 package com.aihelper.app
 import android.content.Context
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.CertificatePinner
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
@@ -9,7 +11,6 @@ import java.io.InputStream
 import java.net.InetSocketAddress
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
-import javax.net.ssl.CertificatePinner
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager

@@ -1,3 +1,4 @@
+
 package com.aihelper.app
 import android.content.Context
 import androidx.datastore.preferences.core.edit
@@ -33,7 +34,7 @@ suspend fun savePin(ctx: Context, host:String, sha256:String) = ctx.dataStore.ed
 suspend fun saveTrustCA(ctx: Context, enable:Boolean) = ctx.dataStore.edit { it[Keys.TRUST_CUSTOM_CA] = if(enable) 1 else 0 }
 fun serverFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.SERVER] ?: "http://127.0.0.1:8000" }
 fun gatewayFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.GATEWAY] ?: "https://api.openai.com" }
-fun proxyFlow(ctx: Context) = ctx.dataStore.data.map { arrayOf(it[Keys.PROXY_TYPE]?:0, it[Keys.PROXY_HOST]?:"", it[Keys.PROXY_PORT]?:0, it[Keys.PROXY_USER]?:"", it[Keys.PROXY_PASS]?:"") }
+fun proxyFlow(ctx: Context) = ctx.dataStore.data.map { listOf(it[Keys.PROXY_TYPE]?:0, it[Keys.PROXY_HOST]?:"", it[Keys.PROXY_PORT]?:0, it[Keys.PROXY_USER]?:"", it[Keys.PROXY_PASS]?:"") }
 fun lastSyncTodoFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.LAST_SYNC_TODO] ?: 0L }
 fun lastSyncMsgFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.LAST_SYNC_MSG] ?: 0L }
 fun pinFlow(ctx: Context) = ctx.dataStore.data.map { Pair(it[Keys.CERT_PIN_HOST]?:"", it[Keys.CERT_PIN_SHA256]?:"") }

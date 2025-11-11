@@ -1,1 +1,1 @@
-// proguard keep rules placeholder
+// proguard rules placeholder
