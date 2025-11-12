@@ -17,9 +17,19 @@ class Repo(private val ctx: Context) {
   private val todoDao get() = db.todoDao()
   private val msgDao get() = db.messageDao()
   private val clientId by lazy { UUID.randomUUID().toString() }
-  suspend fun addTodo(title:String, content:String){ val now = System.currentTimeMillis()/1000; val t = Todo(id=UUID.randomUUID().toString(), title=title, content=content, updated_at=now); withContext(Dispatchers.IO){ todoDao.upsert(t) }; refreshWidget() }
-  suspend fun addMessage(role:String, content:String){ val now = System.currentTimeMillis()/1000; val m = Message(id=UUID.randomUUID().toString(), role=role, content=content, updated_at=now); withContext(Dispatchers.IO){ msgDao.upsert(m) } }
-  suspend fun syncNow(token:String, server:String, proxy:List<Any>, sinceTodo:Long, sinceMsg:Long, pinHost:String="", pinSha256:String="", trustCA:Boolean=false): String = withContext(Dispatchers.IO){
+  suspend fun addTodo(title:String, content:String){
+    val now = System.currentTimeMillis()/1000
+    val t = Todo(id=UUID.randomUUID().toString(), title=title, content=content, updated_at=now)
+    withContext(Dispatchers.IO){ todoDao.upsert(t) }
+    refreshWidget()
+  }
+  suspend fun addMessage(role:String, content:String){
+    val now = System.currentTimeMillis()/1000
+    val m = Message(id=UUID.randomUUID().toString(), role=role, content=content, updated_at=now)
+    withContext(Dispatchers.IO){ msgDao.upsert(m) }
+  }
+  suspend fun syncNow(token:String, server:String, proxy:List<Any>, sinceTodo:Long, sinceMsg:Long,
+                      pinHost:String="", pinSha256:String="", trustCA:Boolean=true): String = withContext(Dispatchers.IO){
     val http = okHttpSecure(ctx, (proxy.getOrNull(0) as? Int) ?: 0, (proxy.getOrNull(1) as? String) ?: "", (proxy.getOrNull(2) as? Int) ?: 0, (proxy.getOrNull(3) as? String) ?: "", (proxy.getOrNull(4) as? String) ?: "", pinHost, pinSha256, trustCA)
     val api = retrofitFor(server, http).create(SyncApi::class.java)
     val todos = todoDao.observe().first(); val msgs  = msgDao.observe().first()
@@ -31,7 +41,8 @@ class Repo(private val ctx: Context) {
   }
   suspend fun exportJson(): File = withContext(Dispatchers.IO){
     val todos = todoDao.observe().first(); val msgs  = msgDao.observe().first()
-    val data = mapOf("todos" to todos, "messages" to msgs); val json = Json { prettyPrint = true }.encodeToString(data)
+    val data = mapOf("todos" to todos, "messages" to msgs)
+    val json = Json { prettyPrint = true }.encodeToString(data)
     val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS); dir.mkdirs()
     val f = File(dir, "AIHelperExport-${System.currentTimeMillis()}.json"); f.writeText(json, Charsets.UTF_8); f
   }
