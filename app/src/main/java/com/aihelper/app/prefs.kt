@@ -20,9 +20,6 @@ object Keys {
   val PROXY_PASS = stringPreferencesKey("proxy_pass")
   val LAST_SYNC_TODO = longPreferencesKey("last_sync_todo")
   val LAST_SYNC_MSG  = longPreferencesKey("last_sync_msg")
-  val CERT_PIN_HOST = stringPreferencesKey("cert_pin_host")
-  val CERT_PIN_SHA256 = stringPreferencesKey("cert_pin_sha256")
-  val TRUST_CUSTOM_CA = intPreferencesKey("trust_custom_ca")
 }
 fun encryptedPrefs(ctx: Context) = EncryptedSharedPreferences.create(ctx,"secure_prefs",MasterKey.Builder(ctx).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
 suspend fun saveServer(ctx: Context, v: String) = ctx.dataStore.edit { it[Keys.SERVER] = v }
@@ -30,12 +27,8 @@ suspend fun saveGateway(ctx: Context, v: String) = ctx.dataStore.edit { it[Keys.
 suspend fun saveProxy(ctx: Context, type:Int, host:String, port:Int, user:String, pass:String) = ctx.dataStore.edit { it[Keys.PROXY_TYPE]=type; it[Keys.PROXY_HOST]=host; it[Keys.PROXY_PORT]=port; it[Keys.PROXY_USER]=user; it[Keys.PROXY_PASS]=pass }
 suspend fun saveLastSyncTodo(ctx: Context, ts:Long) = ctx.dataStore.edit { it[Keys.LAST_SYNC_TODO] = ts }
 suspend fun saveLastSyncMsg(ctx: Context, ts:Long) = ctx.dataStore.edit { it[Keys.LAST_SYNC_MSG] = ts }
-suspend fun savePin(ctx: Context, host:String, sha256:String) = ctx.dataStore.edit { it[Keys.CERT_PIN_HOST]=host; it[Keys.CERT_PIN_SHA256]=sha256 }
-suspend fun saveTrustCA(ctx: Context, enable:Boolean) = ctx.dataStore.edit { it[Keys.TRUST_CUSTOM_CA] = if(enable) 1 else 0 }
 fun serverFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.SERVER] ?: "http://127.0.0.1:8000" }
 fun gatewayFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.GATEWAY] ?: "https://api.openai.com" }
 fun proxyFlow(ctx: Context) = ctx.dataStore.data.map { listOf(it[Keys.PROXY_TYPE]?:0, it[Keys.PROXY_HOST]?:"", it[Keys.PROXY_PORT]?:0, it[Keys.PROXY_USER]?:"", it[Keys.PROXY_PASS]?:"") }
 fun lastSyncTodoFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.LAST_SYNC_TODO] ?: 0L }
 fun lastSyncMsgFlow(ctx: Context) = ctx.dataStore.data.map { it[Keys.LAST_SYNC_MSG] ?: 0L }
-fun pinFlow(ctx: Context) = ctx.dataStore.data.map { Pair(it[Keys.CERT_PIN_HOST]?:"", it[Keys.CERT_PIN_SHA256]?:"") }
-fun trustCAFlow(ctx: Context) = ctx.dataStore.data.map { (it[Keys.TRUST_CUSTOM_CA]?:0) == 1 }

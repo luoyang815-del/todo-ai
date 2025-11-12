@@ -19,13 +19,11 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
     val server = serverFlow(ctx).first()
     val lastTodo = lastSyncTodoFlow(ctx).first()
     val lastMsg  = lastSyncMsgFlow(ctx).first()
-    val (pinHost, pinSha) = pinFlow(ctx).first()
-    val trustCA = trustCAFlow(ctx).first()
-    Repo(ctx).syncNow(tk, server, proxy, lastTodo, lastMsg, pinHost, pinSha, trustCA)
+    Repo(ctx).syncNow(tk, server, proxy, lastTodo, lastMsg)
     Result.success()
   } catch (e: Exception) { Result.retry() }
   companion object {
-    private const val UNIQUE = "auto_sync_v229"
+    private const val UNIQUE = "auto_sync_rv"
     fun start(ctx: Context, minutes: Long = 15){ val req = PeriodicWorkRequestBuilder<SyncWorker>(minutes, TimeUnit.MINUTES).build(); WorkManager.getInstance(ctx).enqueueUniquePeriodicWork(UNIQUE, ExistingPeriodicWorkPolicy.UPDATE, req) }
     fun stop(ctx: Context){ WorkManager.getInstance(ctx).cancelUniqueWork(UNIQUE) }
   }

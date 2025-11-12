@@ -33,7 +33,8 @@ private fun customCaTrust(ctx: Context): Pair<javax.net.ssl.SSLSocketFactory, X5
   val sslContext = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trustManager), null) }
   return Pair(sslContext.socketFactory, trustManager)
 }
-fun okHttpSecure(ctx: Context, proxyType:Int, host:String, port:Int, user:String="", pass:String="", pinHost:String="", pinSha256:String="", trustCustomCA:Boolean=false): OkHttpClient {
+fun okHttpSecure(ctx: Context, proxyType:Int, host:String, port:Int, user:String="", pass:String="",
+                 pinHost:String="", pinSha256:String="", trustCustomCA:Boolean=false): OkHttpClient {
   val log = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
   val b = OkHttpClient.Builder().addInterceptor(log)
   if (proxyType in 1..3 && host.isNotBlank() && port>0){
