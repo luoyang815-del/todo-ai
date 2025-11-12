@@ -27,23 +27,15 @@ class TodosWidget : GlanceAppWidget() {
     ) {
         val list = runBlocking { Repo(context).top3() }
         provideContent {
-            WidgetUI(
-                lines = list.map { "• " + (it.title.ifBlank { it.content }.take(24)) }
-            )
+            WidgetUI(lines = list.map { "• " + (it.title.ifBlank { it.content }.take(24)) })
         }
     }
 }
 
 @Composable
 fun WidgetUI(lines: List<String>) {
-    val bg = ColorProvider(
-        day = Color(0x6E000000),
-        night = Color(0x6E000000)
-    )
-    val fg = ColorProvider(
-        day = Color.White,
-        night = Color.White
-    )
+    val bg = ColorProvider(day = Color(0x6E000000), night = Color(0x6E000000))
+    val fg = ColorProvider(day = Color.White, night = Color.White)
 
     Column(
         modifier = GlanceModifier
@@ -51,17 +43,13 @@ fun WidgetUI(lines: List<String>) {
             .background(bg)
             .padding(12.dp)
     ) {
-        Text(
-            text = "AI 助手 · 代办",
-            style = TextStyle(color = fg)
-        )
+        Text("AI 助手 · 代办", style = TextStyle(color = fg))
         Spacer(GlanceModifier.height(8.dp))
-
         if (lines.isEmpty()) {
-            Text(text = "暂无代办", style = TextStyle(color = fg))
+            Text("暂无代办", style = TextStyle(color = fg))
         } else {
             lines.forEach { s ->
-                Text(text = s, maxLines = 1, style = TextStyle(color = fg))
+                Text(s, maxLines = 1, style = TextStyle(color = fg))
             }
         }
     }
