@@ -1,4 +1,4 @@
-name: Android CI (todo-ai full)
+name: Android CI (hotfix, no-wrapper)
 
 on:
   workflow_dispatch:
@@ -14,16 +14,26 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v3
-      - run: chmod +x gradlew || true
+      # Provision Gradle without relying on wrapper jar
+      - name: Install Gradle 8.6
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          curl -L https://services.gradle.org/distributions/gradle-8.6-bin.zip -o gradle.zip
+          sudo mkdir -p /opt/gradle
+          sudo unzip -q gradle.zip -d /opt/gradle
+          echo "GRADLE_HOME=/opt/gradle/gradle-8.6" >> $GITHUB_ENV
+          echo "/opt/gradle/gradle-8.6/bin" >> $GITHUB_PATH
+      - name: Gradle Version
+        run: gradle --version
       - name: Assemble Debug
-        run: ./gradlew :app:assembleDebug -x test
-      - name: Assemble Release
-        run: ./gradlew :app:assembleRelease -x test || true
+        run: gradle :app:assembleDebug -x test
+      - name: Assemble Release (best-effort)
+        run: gradle :app:assembleRelease -x test || true
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: todo-ai-build
+          name: todo-ai-build-hotfix
           path: |
             app/build/outputs/apk/debug/*.apk
             app/build/outputs/apk/release/*.apk
