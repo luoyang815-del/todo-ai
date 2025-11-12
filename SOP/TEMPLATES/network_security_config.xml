@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+  <base-config cleartextTrafficPermitted="false">
+    <trust-anchors>
+      <certificates src="system" />
+      <certificates src="user" /> <!-- 允许信任“用户证书”，便于导入自签 CA -->
+    </trust-anchors>
+  </base-config>
+</network-security-config>

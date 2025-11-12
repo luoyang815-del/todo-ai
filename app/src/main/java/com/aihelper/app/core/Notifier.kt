@@ -1,13 +1,11 @@
 
 package com.aihelper.app.core
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-
 object Notifier {
   private const val CHANNEL_ID = "aihelper_channel"
   fun init(ctx: Context) {
@@ -19,10 +17,7 @@ object Notifier {
   fun notify(ctx: Context, title: String, content: String) {
     val n = NotificationCompat.Builder(ctx, CHANNEL_ID)
       .setSmallIcon(android.R.drawable.stat_notify_more)
-      .setContentTitle(title)
-      .setContentText(content)
-      .setAutoCancel(true)
-      .build()
+      .setContentTitle(title).setContentText(content).setAutoCancel(true).build()
     NotificationManagerCompat.from(ctx).notify(System.currentTimeMillis().toInt(), n)
   }
 }
