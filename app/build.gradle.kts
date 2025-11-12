@@ -41,7 +41,7 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
   implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
-  implementation("androidx.glance:glance-appwidget:1.2.0-alpha02")  // dp 正确来源
+  implementation("androidx.glance:glance-appwidget:1.1.0")
   implementation("androidx.datastore:datastore-preferences:1.1.1")
   implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
