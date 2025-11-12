@@ -16,7 +16,7 @@ import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.color.ColorProvider
-import androidx.glance.unit.dp
+import androidx.glance.unit.Dp
 import com.aihelper.app.Repo
 import kotlinx.coroutines.runBlocking
 
@@ -27,24 +27,32 @@ class TodosWidget : GlanceAppWidget() {
     ) {
         val list = runBlocking { Repo(context).top3() }
         provideContent {
-            WidgetUI(lines = list.map { "• " + (it.title.ifBlank { it.content }.take(24)) })
+            WidgetUI(
+                lines = list.map { "• " + (it.title.ifBlank { it.content }.take(24)) }
+            )
         }
     }
 }
 
 @Composable
 fun WidgetUI(lines: List<String>) {
-    val bg = ColorProvider(day = Color(0x6E000000), night = Color(0x6E000000))
-    val fg = ColorProvider(day = Color.White, night = Color.White)
+    val bg = ColorProvider(
+        day = Color(0x6E000000),
+        night = Color(0x6E000000)
+    )
+    val fg = ColorProvider(
+        day = Color.White,
+        night = Color.White
+    )
 
     Column(
         modifier = GlanceModifier
             .appWidgetBackground()
             .background(bg)
-            .padding(12.dp)
+            .padding(Dp(12f))
     ) {
         Text("AI 助手 · 代办", style = TextStyle(color = fg))
-        Spacer(GlanceModifier.height(8.dp))
+        Spacer(GlanceModifier.height(Dp(8f)))
         if (lines.isEmpty()) {
             Text("暂无代办", style = TextStyle(color = fg))
         } else {
