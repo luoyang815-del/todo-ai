@@ -54,6 +54,7 @@ fun WidgetUI(lines: List<String>) {
         Text(
             text = "AI 助手 · 代办",
             style = TextStyle(color = fg)
+        )
         Spacer(GlanceModifier.height(8.dp))
 
         if (lines.isEmpty()) {
