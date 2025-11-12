@@ -46,9 +46,6 @@ class MainActivity : ComponentActivity() {
   var content by remember { mutableStateOf("") }
   var todos by remember { mutableStateOf(listOf<Todo>()) }
 
-  // 若你有 Repo(ctx).getTodos() 可替换这里的空列表加载
-  // LaunchedEffect(Unit){ todos = Repo(ctx).getTodos() }
-
   Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
     OutlinedTextField(value=title, onValueChange={title=it}, label={Text("标题")}, modifier=Modifier.weight(1f))
     OutlinedTextField(value=content, onValueChange={content=it}, label={Text("内容")}, modifier=Modifier.weight(1f))
@@ -60,7 +57,6 @@ class MainActivity : ComponentActivity() {
         if (title.isBlank() && content.isBlank()) {
           Toast.makeText(ctx, "请输入内容", Toast.LENGTH_SHORT).show(); return@launch
         }
-        // 若你有 Repo(ctx).addTodo(...) 可替换为真实存储
         val now = System.currentTimeMillis()/1000
         val t = Todo(id = now.toString(), title = title.ifBlank{"(无标题)"}, content = content, updated_at = now)
         todos = listOf(t) + todos
@@ -97,7 +93,6 @@ class MainActivity : ComponentActivity() {
   Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
     Button(onClick = {
       scope.launch {
-        // 这里对接你的网关调用，当前放一个示例回复保证 UI 可走通
         reply = "【示例回复】这是根据你的输入生成的总结与 3 条待办建议。"
         onLog("已收到回复并保存（本地）")
       }
