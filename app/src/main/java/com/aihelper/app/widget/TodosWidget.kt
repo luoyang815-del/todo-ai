@@ -37,8 +37,8 @@ class TodosWidget : GlanceAppWidget() {
 @Composable
 fun WidgetUI(lines: List<String>) {
     val bg = ColorProvider(
-        day = Color(0x6E000000),   // 半透明黑（白天）
-        night = Color(0x6E000000)  // 夜间
+        day = Color(0x6E000000),
+        night = Color(0x6E000000)
     )
     val fg = ColorProvider(
         day = Color.White,
