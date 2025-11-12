@@ -19,11 +19,11 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContent { App() }
+    setContent { MainScreen() }
   }
 }
 
-@Composable fun App() {
+@Composable fun MainScreen() {
   var tab by remember { mutableStateOf(0) }
   var log by remember { mutableStateOf("") }
   MaterialTheme {
@@ -135,6 +135,7 @@ class MainActivity : ComponentActivity() {
       Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = { onLog("已保存服务器/Token"); syncStatus=""; }){ Text("保存同步") }
         Button(onClick = {
+          // 示例：可改为 Sync.api(server).push/pull
           syncStatus="成功"; onLog("立即同步: ok")
         }){ Text("立即同步") }
       }

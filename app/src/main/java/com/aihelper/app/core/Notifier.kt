@@ -19,7 +19,9 @@ object Notifier {
   fun notify(ctx: Context, title: String, content: String) {
     val n = NotificationCompat.Builder(ctx, CHANNEL_ID)
       .setSmallIcon(android.R.drawable.stat_notify_more)
-      .setContentTitle(title).setContentText(content).setAutoCancel(true)
+      .setContentTitle(title)
+      .setContentText(content)
+      .setAutoCancel(true)
       .build()
     NotificationManagerCompat.from(ctx).notify(System.currentTimeMillis().toInt(), n)
   }
