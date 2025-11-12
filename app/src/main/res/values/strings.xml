@@ -1,1 +1,3 @@
-<resources><string name="app_name">AI 助手</string></resources>
+<resources>
+    <string name="app_name">todo-ai</string>
+</resources>
