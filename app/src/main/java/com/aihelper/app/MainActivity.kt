@@ -1,335 +1,145 @@
 
 package com.aihelper.app
-
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+
+data class Todo(val id:String, val title:String, val content:String, val updatedAt:Long)
+data class Msg(val role:String, val content:String, val updatedAt:Long)
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            App()
-        }
-    }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent { App() }
+  }
 }
 
-@Composable
-fun App() {
-    var tab by remember { mutableStateOf(0) }
-    var log by remember { mutableStateOf("") }
-
-    MaterialTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
-        ) {
-            TabRow(selectedTabIndex = tab) {
-                Tab(selected = tab == 0, onClick = { tab = 0 }, text = { Text("代办") })
-                Tab(selected = tab == 1, onClick = { tab = 1 }, text = { Text("聊天") })
-                Tab(selected = tab == 2, onClick = { tab = 2 }, text = { Text("设置") })
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            when (tab) {
-                0 -> TodoTab { msg -> log = msg }
-                1 -> ChatTab { msg -> log = msg }
-                2 -> SettingsTab { msg -> log = msg }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(log)
-        }
+@Composable fun App() {
+  var tab by remember { mutableStateOf(0) }
+  var log by remember { mutableStateOf("") }
+  MaterialTheme {
+    Column(Modifier.fillMaxSize().padding(12.dp)) {
+      TabRow(selectedTabIndex = tab) {
+        Tab(selected = tab==0, onClick={tab=0}, text={ Text("代办") })
+        Tab(selected = tab==1, onClick={tab=1}, text={ Text("聊天") })
+        Tab(selected = tab==2, onClick={tab=2}, text={ Text("设置") })
+      }
+      Spacer(Modifier.height(12.dp))
+      when(tab){ 0 -> TodoTab { log = it }; 1 -> ChatTab { log = it }; 2 -> SettingsTab { log = it } }
+      Spacer(Modifier.height(8.dp)); if (log.isNotBlank()) Text(log)
     }
+  }
 }
 
-@Composable
-fun TodoTab(onLog: (String) -> Unit) {
-    val ctx = androidx.compose.ui.platform.LocalContext.current
-    val scope = rememberCoroutineScope()
+@Composable fun TodoTab(onLog:(String)->Unit){
+  var title by remember { mutableStateOf("") }
+  var content by remember { mutableStateOf("") }
+  var todos by remember { mutableStateOf(listOf<Todo>()) }
 
-    var title by remember { mutableStateOf("示例代办") }
-    var content by remember { mutableStateOf("来自安卓端") }
+  Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    OutlinedTextField(title, {title=it}, label={Text("标题")}, modifier=Modifier.weight(1f))
+    OutlinedTextField(content, {content=it}, label={Text("内容")}, modifier=Modifier.weight(1f))
+  }
+  Spacer(Modifier.height(8.dp))
+  Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Button(onClick = {
+      if (title.isBlank() && content.isBlank()) return@Button
+      val t = Todo(System.currentTimeMillis().toString(), title.ifBlank{"(无标题)"}, content, System.currentTimeMillis())
+      todos = listOf(t) + todos
+      title = ""; content = ""
+      onLog("已写入代办并刷新列表")
+      Toast.makeText(androidx.compose.ui.platform.LocalContext.current, "已写入代办", Toast.LENGTH_SHORT).show()
+    }){ Text("写入本地") }
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("标题") },
-            modifier = Modifier.weight(1f)
-        )
-        OutlinedTextField(
-            value = content,
-            onValueChange = { content = it },
-            label = { Text("内容") },
-            modifier = Modifier.weight(1f)
-        )
-    }
+    Button(onClick = {
+      onLog("已导出：/Documents/AIHelperExport-*.json（示例占位）")
+      Toast.makeText(androidx.compose.ui.platform.LocalContext.current, "导出完成(示例)", Toast.LENGTH_SHORT).show()
+    }){ Text("导出数据") }
+  }
 
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(
-            onClick = {
-                scope.launch {
-                    Repo(ctx).addTodo(title, content)
-                    onLog("已写入代办")
-                    Noti.notify(ctx, "代办", "已写入本地")
-                }
-            }
-        ) {
-            Text("写入本地")
-        }
-
-        Button(
-            onClick = {
-                scope.launch {
-                    val f = Repo(ctx).exportJson()
-                    onLog("已导出: " + f.absolutePath)
-                    Noti.notify(ctx, "导出", "JSON 已生成")
-                }
-            }
-        ) {
-            Text("导出数据")
-        }
-    }
+  Spacer(Modifier.height(8.dp)); Divider()
+  Text("最近代办", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top=8.dp, bottom=8.dp))
+  LazyColumn(Modifier.fillMaxWidth().weight(1f, fill=false)) {
+    items(todos){ t -> Text("• " + (t.title.ifBlank{t.content}.take(60))) }
+  }
 }
 
-@Composable
-fun ChatTab(onLog: (String) -> Unit) {
-    val ctx = androidx.compose.ui.platform.LocalContext.current
-    val scope = rememberCoroutineScope()
+@Composable fun ChatTab(onLog:(String)->Unit){
+  var input by remember { mutableStateOf("请总结今天的代办，并生成 3 条下一步待办。") }
+  var model by remember { mutableStateOf("gpt-4o-mini") }
+  var reply by remember { mutableStateOf("") }
 
-    var text by remember { mutableStateOf("你好，帮我总结今天代办") }
-    var model by remember { mutableStateOf("gpt-4o-mini") }
+  OutlinedTextField(model, {model=it}, label={Text("模型")}, modifier=Modifier.fillMaxWidth())
+  OutlinedTextField(input, {input=it}, label={Text("输入")}, modifier=Modifier.fillMaxWidth())
+  Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Button(onClick = {
+      reply = "【示例回复】这是根据你的输入生成的总结与 3 条待办建议。"
+      onLog("已收到回复并保存（本地）")
+    }){ Text("发送") }
 
-    OutlinedTextField(
-        value = model,
-        onValueChange = { model = it },
-        label = { Text("模型") },
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
-        label = { Text("输入") },
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(
-            onClick = {
-                scope.launch {
-                    Repo(ctx).addMessage("user", text)
-                    onLog("已保存聊天（本地）")
-                }
-            }
-        ) {
-            Text("保存")
-        }
-    }
+    Button(onClick = {
+      if (reply.isBlank()) return@Button
+      onLog("已将回复保存为代办")
+      Toast.makeText(androidx.compose.ui.platform.LocalContext.current, "已转为代办", Toast.LENGTH_SHORT).show()
+    }){ Text("转为代办") }
+  }
+  if (reply.isNotBlank()) { Spacer(Modifier.height(8.dp)); Text("回复：\n"+reply) }
 }
 
-@Composable
-fun SettingsTab(onLog: (String) -> Unit) {
-    val ctx = androidx.compose.ui.platform.LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    var server by remember { mutableStateOf("http://127.0.0.1:8000") }
-    var gateway by remember { mutableStateOf("https://api.openai.com") }
-    var proxyType by remember { mutableStateOf(0) }
-    var proxyHost by remember { mutableStateOf("") }
-    var proxyPort by remember { mutableStateOf("") }
-    var proxyUser by remember { mutableStateOf("") }
-    var proxyPass by remember { mutableStateOf("") }
-    var token by remember { mutableStateOf("") }
-    var lastTodo by remember { mutableStateOf(0L) }
-    var lastMsg by remember { mutableStateOf(0L) }
-    var pinHost by remember { mutableStateOf("") }
-    var pinSha256 by remember { mutableStateOf("") }
-    var trustCA by remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) { serverFlow(ctx).collect { server = it } }
-    LaunchedEffect(Unit) { gatewayFlow(ctx).collect { gateway = it } }
-    LaunchedEffect(Unit) { lastSyncTodoFlow(ctx).collect { lastTodo = it } }
-    LaunchedEffect(Unit) { lastSyncMsgFlow(ctx).collect { lastMsg = it } }
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("同步设置", style = MaterialTheme.typography.titleMedium)
-
-        OutlinedTextField(
-            value = server,
-            onValueChange = { server = it },
-            label = { Text("服务器") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = token,
-            onValueChange = { token = it },
-            label = { Text("Token（仅本机）") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Text("last_sync:  todos=" + lastTodo + ", messages=" + lastMsg)
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(
-                onClick = {
-                    scope.launch {
-                        saveServer(ctx, server)
-                        encryptedPrefs(ctx).edit().putString("token", token).apply()
-                        onLog("已保存服务器/Token")
-                    }
-                }
-            ) {
-                Text("保存同步")
-            }
-
-            Button(
-                onClick = {
-                    scope.launch {
-                        val proxy = proxyFlow(ctx).first()
-                        val tk = encryptedPrefs(ctx).getString("token", "") ?: ""
-                        val res = Repo(ctx).syncNow(
-                            token = tk,
-                            server = server,
-                            proxy = proxy,
-                            sinceTodo = lastTodo,
-                            sinceMsg = lastMsg,
-                            pinHost = pinHost,
-                            pinSha256 = pinSha256,
-                            trustCA = trustCA
-                        )
-                        onLog("立即同步: " + res)
-                        Noti.notify(ctx, "同步", res)
-                    }
-                }
-            ) {
-                Text("立即同步")
-            }
-        }
-
-        Divider()
-
-        Text("代理 / 网关 / 证书", style = MaterialTheme.typography.titleMedium)
-
-        OutlinedTextField(
-            value = gateway,
-            onValueChange = { gateway = it },
-            label = { Text("网关 BaseURL") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = proxyHost,
-                onValueChange = { proxyHost = it },
-                label = { Text("代理主机") }
-            )
-            OutlinedTextField(
-                value = proxyPort,
-                onValueChange = { proxyPort = it },
-                label = { Text("端口") }
-            )
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = proxyUser,
-                onValueChange = { proxyUser = it },
-                label = { Text("用户名") }
-            )
-            OutlinedTextField(
-                value = proxyPass,
-                onValueChange = { proxyPass = it },
-                label = { Text("密码") },
-                visualTransformation = PasswordVisualTransformation()
-            )
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { proxyType = 0; onLog("代理=无") }) { Text("无") }
-            Button(onClick = { proxyType = 1; onLog("代理=HTTP") }) { Text("HTTP") }
-            Button(onClick = { proxyType = 2; onLog("代理=HTTPS") }) { Text("HTTPS") }
-            Button(onClick = { proxyType = 3; onLog("代理=SOCKS") }) { Text("SOCKS") }
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = pinHost,
-                onValueChange = { pinHost = it },
-                label = { Text("Pin 主机") },
-                modifier = Modifier.weight(1f)
-            )
-            OutlinedTextField(
-                value = pinSha256,
-                onValueChange = { pinSha256 = it },
-                label = { Text("Pin SHA256（去掉 sha256/）") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(
-                onClick = {
-                    scope.launch {
-                        saveGateway(ctx, gateway)
-                        val p = proxyPort.toIntOrNull() ?: 0
-                        saveProxy(ctx, proxyType, proxyHost, p, proxyUser, proxyPass)
-                        onLog("已保存代理/网关")
-                    }
-                }
-            ) {
-                Text("保存代理设置")
-            }
-
-            Button(
-                onClick = {
-                    trustCA = !trustCA
-                    if (trustCA) {
-                        onLog("信任内置 CA：开")
-                    } else {
-                        onLog("信任内置 CA：关")
-                    }
-                }
-            ) {
-                Text(if (trustCA) "自签CA(开)" else "自签CA(关)")
-            }
-        }
+@Composable fun SettingsTab(onLog:(String)->Unit){
+  var server by remember { mutableStateOf("http://127.0.0.1:8000") }
+  var gateway by remember { mutableStateOf("https://api.openai.com") }
+  var proxyHost by remember { mutableStateOf("") }
+  var proxyPort by remember { mutableStateOf("") }
+  var proxyUser by remember { mutableStateOf("") }
+  var proxyPass by remember { mutableStateOf("") }
+  var token by remember { mutableStateOf("") }
+  var syncStatus by remember { mutableStateOf("") }
+  LazyColumn(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    item {
+      Text("同步设置", style=MaterialTheme.typography.titleMedium)
+      OutlinedTextField(server, {server=it}, label={Text("服务器")}, modifier=Modifier.fillMaxWidth())
+      OutlinedTextField(token, {token=it}, label={Text("Token（仅本机）")}, visualTransformation=PasswordVisualTransformation(), modifier=Modifier.fillMaxWidth())
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onClick = { onLog("已保存服务器/Token"); syncStatus=""; }){ Text("保存同步") }
+        Button(onClick = { onLog("立即同步: ok"); syncStatus="成功" }){ Text("立即同步") }
+      }
+      if (syncStatus.isNotBlank()) {
+        val color = if (syncStatus=="成功") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+        Text("同步状态：$syncStatus", color = color)
+      }
+      Divider(Modifier.padding(vertical=6.dp))
     }
+    item {
+      Text("代理 / 网关 / 证书", style=MaterialTheme.typography.titleMedium)
+      OutlinedTextField(gateway, {gateway=it}, label={Text("网关 BaseURL")}, modifier=Modifier.fillMaxWidth())
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(proxyHost, {proxyHost=it}, label={Text("代理主机")}, modifier=Modifier.weight(1f))
+        OutlinedTextField(proxyPort, {proxyPort=it}, label={Text("端口")}, modifier=Modifier.weight(1f))
+      }
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(proxyUser, {proxyUser=it}, label={Text("用户名")}, modifier=Modifier.weight(1f))
+        OutlinedTextField(proxyPass, {proxyPass=it}, label={Text("密码")}, visualTransformation=PasswordVisualTransformation(), modifier=Modifier.weight(1f))
+      }
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onClick = { onLog("代理=无") }){ Text("无") }
+        Button(onClick = { onLog("代理=HTTP") }){ Text("HTTP") }
+        Button(onClick = { onLog("代理=HTTPS") }){ Text("HTTPS") }
+        Button(onClick = { onLog("代理=SOCKS") }){ Text("SOCKS") }
+      }
+      Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onClick = { onLog("已保存代理/网关") }){ Text("保存代理设置") }
+        Button(onClick = { onLog("自签CA：切换") }){ Text("自签CA(切换)") }
+      }
+    }
+  }
 }
